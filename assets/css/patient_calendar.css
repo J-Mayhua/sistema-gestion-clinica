@@ -1,0 +1,62 @@
+/* patient_calendar.css */
+
+/* Estilos básicos para el calendario */
+.calendar-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.date-cell {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    display: inline-block;
+    width: 50px;
+    margin: 2px;
+}
+
+.date-cell.free {
+    background-color: #fff;
+}
+
+.date-cell.occupied {
+    background-color: #f00;
+    color: #fff;
+}
+
+.date-cell.special {
+    background-color: #000;
+    color: #fff;
+}
+
+.form-container {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+.form-container h2 {
+    margin-top: 0;
+}
+
+.form-container label {
+    display: block;
+    margin-top: 10px;
+}
+
+.form-container input[type="text"],
+.form-container input[type="date"],
+.form-container input[type="time"],
+.form-container select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+.form-container input[type="submit"] {
+    margin-top: 20px;
+}

@@ -1,0 +1,341 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,200i,300,300i,400,400i,600,600i,700,700i,900,900i&display=swap');
+
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'Source Sans Pro', sans-serif; 
+}
+
+body {
+    background: #f0f8ff; /* Lighter sky blue for better contrast */
+    transition: background-color 0.5s ease;
+}
+
+/* Header Styles */
+header {
+    position: fixed;
+    top: 40px; /* Espacio para el horario arriba */
+    left: 0;
+    width: 100%;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 25px -22px black;
+    z-index: 10;
+    transition: transform 0.3s ease, opacity 0.3s ease; /* Transición suave para ocultar/mostrar */
+}
+
+header:hover {
+    box-shadow: 0 6px 25px -18px black;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    height: 100%;
+}
+
+/* Logo Styles */
+.logo {
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.logo h1 {
+    color: rgb(16, 125, 145);
+    transition: color 0.3s ease;
+}
+
+.logo h1 b {
+    color: #d1a221;
+}
+
+.logo-img {
+    margin-right: 15px;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover .logo-img {
+    transform: rotate(5deg);
+}
+
+/* Business Hours - Esquina superior derecha sin tapar iconos */
+.hora {
+    position: absolute;
+    top: -40px; /* Arriba del header */
+    right: 10px; /* Esquina derecha como en tu imagen original */
+    color: #fff;
+    background-color: #107d91;
+    padding: 6px 12px;
+    border-radius: 0 0 20px 20px; /* Solo bordes inferiores redondeados */
+    font-size: 0.9rem;
+    z-index: 5;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+.hora:hover {
+    background-color: #0a5a68;
+}
+
+/* Menu Styling */
+.menu {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.menu nav {
+    height: 100%;
+}
+
+.menu nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+    margin: 0;
+}
+
+.menu nav ul li {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin: 0 10px;
+}
+
+.menu nav ul li a {
+    width: 120px;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #555;
+    transition: all 300ms ease;
+    border: 2px solid transparent;
+    background-color: #f9f9f9;
+}
+
+.menu nav ul li a i {
+    margin-right: 5px;
+    color: #107d91;
+}
+
+.menu-selected:before {
+    content: '';
+    width: 100%;
+    height: 4px;
+    background: #0a90ce;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.menu nav ul li a:hover {
+    background-color: #107d91;
+    color: #fff;
+    border-color: #107d91;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Mobile Menu Icon */
+#icon-menu {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    right: 20px;
+    top: 16px;
+    padding: 10px;
+    font-size: 20px;
+    background: #eee;
+    border-radius: 100%;
+    color: #787878;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 15; /* z-index alto para que esté sobre todo */
+}
+
+#icon-menu:hover {
+    background: #107d91;
+    color: #fff;
+}
+
+/* Estilos para el efecto de ocultar/mostrar cabecera */
+/* Clase para mostrar cabecera */
+header.header-visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Clase para ocultar cabecera */
+header.header-hidden {
+    transform: translateY(-130px); /* Mueve completamente fuera de la vista */
+    opacity: 0;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1220px) {
+    .header-content {
+        max-width: 1000px;
+        padding: 0 20px;
+    }
+    
+    .hora {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    body {
+        overflow-x: hidden;
+        padding-top: 120px; /* Espacio para header + horario */
+    }
+    
+    /* Header vuelve al top en móvil */
+    header {
+        top: 0;
+    }
+    
+    /* En móvil, cuando se oculta, debe moverse completamente fuera */
+    header.header-hidden {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    
+    .container-all {
+        transition: all 300ms cubic-bezier(1,0,0,1);
+    }
+    
+    .move-container-all {
+        transform: translateX(300px);
+    }
+
+    .show-lateral {
+        width: 300px;
+        transform: translateX(0px);
+    }
+    
+    .menu-selected:before {
+        width: 0;
+    }
+    
+    #icon-menu {
+        display: flex;
+        right: 20px; /* Ajustado para que no se solape con el horario */
+        z-index: 20;
+    }
+    
+    .logo h1 {
+        font-size: 22px;
+    }
+    
+    .logo-img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .hora {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+        top: 5px; /* Dentro del header en móvil */
+        right: 80px; /* Espacio para el botón hamburguesa */
+    }
+
+    /* Correcciones para el menú móvil */
+    .menu {
+        width: 0px;
+        height: 100vh;
+        position: fixed;
+        top: 80px;
+        left: 0;
+        background: #fff;
+        overflow: hidden;
+        transform: translateX(-350px);
+        box-shadow: 10px 0 20px -25px black;
+        transition: all 300ms cubic-bezier(1,0,0,1);
+        margin: 0;
+        z-index: 1000;
+    }
+    
+    .menu.show-lateral {
+        width: 300px;
+        transform: translateX(0px);
+        overflow-y: auto;
+    }
+    
+    .menu nav ul {
+        flex-direction: column;
+        padding-top: 20px;
+    }
+    
+    .menu nav ul li {
+        max-width: 200px;
+        height: 50px;
+        justify-content: flex-start;
+        margin: 15px 0;
+        padding-left: 20px;
+    }
+    
+    .menu nav ul li a {
+        margin-top: 10px;
+        color: #555;
+        border: none;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    
+    .menu nav ul li a i {
+        width: 20px;
+        display: inline-block;
+        margin-right: 10px;
+        color: #107d91;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .menu nav ul li a {
+        font-size: 16px;
+    }
+    
+    .logo h1 {
+        font-size: 18px;
+    }
+    
+    .hora {
+        font-size: 0.5rem;
+        padding: 2px 4px;
+        top: 2px;
+        right: 80px; /* Espacio para el botón hamburguesa */
+        border-radius: 10px; /* Bordes normales en móvil */
+    }
+    
+    #icon-menu {
+        right: 15px;
+    }
+}

@@ -1,0 +1,354 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,200i,300,300i,400,400i,600,600i,700,700i,900,900i&display=swap');
+
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'Source Sans Pro', sans-serif; 
+}
+
+body {
+    background: #f0f8ff; /* Lighter sky blue for better contrast */
+    transition: background-color 0.5s ease;
+}
+
+/* Contenedor principal - asegurar que empiece debajo de la cabecera */
+.container-all {
+    margin-top: 120px; /* Ajusta este valor según la altura de tu cabecera */
+    /* Si tu cabecera tiene una altura diferente, cambia este valor */
+}
+
+/* Hero Section/Cover */
+.article-container-cover {
+    width: 100%;
+    height: 500px;
+    position: relative;
+    margin-top: 0; /* Ya no necesita margin-top porque el contenedor padre lo tiene */
+    background-image: url(../images/fondo.png);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.article-container-cover:before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    background: rgba(16, 125, 145, 0.2);
+    position: absolute;
+    top: 0;
+    left: 0;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+/* Carousel Styles */
+.carousel-container {
+    position: relative;
+    width: 80%;
+    max-width: 800px;
+    margin: 40px auto;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+
+.carousel {
+    display: flex;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+}
+
+.carousel-item {
+    min-width: 50%; /* Esto asegura que se muestren 2 items a la vez */
+    box-sizing: border-box;
+    padding: 5px;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 300px; /* Altura uniforme para todas las imágenes */
+    object-fit: cover;
+    display: block;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.carousel-item:hover img {
+    transform: scale(1.03);
+}
+
+/* Botones de navegación del carrusel */
+.carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.4);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 1;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-button:hover {
+    background: rgba(16, 125, 145, 0.8);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-button.left {
+    left: 10px;
+}
+
+.carousel-button.right {
+    right: 10px;
+}
+
+/* Welcome Section Styles */
+.intro-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #f3f4f6, #ffffff);
+    margin-top: 40px;
+}
+
+.intro-box {
+    max-width: 800px;
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-left: 5px solid #107d91;
+}
+
+.intro-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.intro-title {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.intro-title span {
+    color: #107d91; /* Color personalizado para resaltar "HappyDent" */
+    position: relative;
+}
+
+.intro-title span::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #d1a221;
+}
+
+.intro-text {
+    font-size: 1.2rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* Services Section */
+main {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.tratamiento {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 25px;
+    background-color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.tratamiento:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    border-color: #d1a221;
+}
+
+.tratamiento img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    transition: transform 0.5s ease;
+}
+
+.tratamiento:hover img {
+    transform: scale(1.05);
+}
+
+.tratamiento h3 {
+    color: #107d91;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.tratamiento p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Back to Top Button */
+#button-up {
+    width: 60px;
+    height: 60px;
+    background: #107d91;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    border-radius: 50%;
+    font-size: 20px;
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    cursor: pointer;
+    border: 4px solid transparent;
+    transition: all 0.3s ease;
+    transform: scale(0);
+    opacity: 0;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+    z-index: 100;
+}
+
+#button-up.show {
+    transform: scale(1);
+    opacity: 1;
+}
+
+#button-up:hover {
+    transform: scale(1.1);
+    background: #0a5a68;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slide-up {
+    from { 
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to { 
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1220px) {
+    .container-content {
+        max-width: 1000px;
+        padding: 0 20px;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    body {
+        overflow-x: hidden;
+    }
+    
+    .container-all {
+        transition: all 300ms cubic-bezier(1,0,0,1);
+        margin-top: 100px; /* Ajustar para pantallas más pequeñas */
+    }
+    
+    .carousel-container {
+        max-width: 95%;
+    }
+    
+    /* Para el carrusel en móvil: solo se muestra 1 imagen */
+    .carousel-item {
+        min-width: 100%;
+    }
+    
+    .intro-title {
+        font-size: 2rem;
+    }
+    
+    .intro-text {
+        font-size: 1rem;
+    }
+    
+    .intro-box {
+        padding: 30px 20px;
+    }
+    
+    .tratamiento {
+        margin-bottom: 20px;
+    }
+    
+    #button-up {
+        width: 50px;
+        height: 50px;
+        font-size: 18px;
+        bottom: 30px;
+        right: 30px;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .container-all {
+        margin-top: 80px; /* Menor margen para móviles pequeños */
+    }
+    
+    .intro-title {
+        font-size: 1.8rem;
+    }
+    
+    .carousel-item img {
+        height: 200px;
+    }
+    
+    .tratamiento h3 {
+        font-size: 1.3rem;
+    }
+    
+    #button-up {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+        bottom: 20px;
+        right: 20px;
+    }
+}

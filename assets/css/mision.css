@@ -1,0 +1,31 @@
+.vision-mision-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 50px 0;
+  }
+  
+  .vision-container, .mision-container {
+    flex-basis: 45%;
+    text-align: center;
+  }
+  
+  .circular-image {
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    margin: 0 auto 20px;
+  }
+  
+  @media (max-width: 768px) {
+    .vision-container, .mision-container {
+      flex-basis: 100%;
+      margin-top: 40px;
+    }
+  }
+  
+  

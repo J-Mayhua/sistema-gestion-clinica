@@ -1,0 +1,441 @@
+/* Variables CSS para consistencia */
+:root {
+    --primary-color: #2c5282;
+    --secondary-color: #4299e1;
+    --success-color: #48bb78;
+    --danger-color: #f56565;
+    --warning-color: #ed8936;
+    --background-color: #f7fafc;
+    --surface-color: #ffffff;
+    --text-primary: #2d3748;
+    --text-secondary: #4a5568;
+    --border-color: #e2e8f0;
+    --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-heavy: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+/* Header mejorado */
+header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 2rem 1rem;
+    text-align: center;
+    box-shadow: var(--shadow-medium);
+    position: relative;
+    overflow: hidden;
+}
+
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    z-index: 0;
+}
+
+header > * {
+    position: relative;
+    z-index: 1;
+}
+
+header h1 {
+    margin: 0 0 1rem 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Navegación mejorada */
+nav {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+nav a:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Contenedor principal mejorado */
+main {
+    margin: 2rem auto;
+    max-width: 1200px;
+    padding: 2rem;
+    background: var(--surface-color);
+    box-shadow: var(--shadow-heavy);
+    border-radius: 20px;
+    position: relative;
+    backdrop-filter: blur(10px);
+}
+
+main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+    border-radius: 20px;
+    z-index: 0;
+}
+
+main > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Títulos mejorados */
+h1, h2 {
+    margin: 0 0 1.5rem 0;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+h2 {
+    font-size: 1.8rem;
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+/* Contenedor de tabla responsivo */
+.table-container {
+    overflow-x: auto;
+    margin-top: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-medium);
+}
+
+/* Tabla mejorada */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface-color);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+}
+
+th, td {
+    padding: 1rem 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+th {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+tbody tr {
+    transition: all 0.3s ease;
+}
+
+tbody tr:hover {
+    background: linear-gradient(135deg, rgba(66, 153, 225, 0.05), rgba(116, 75, 162, 0.05));
+    transform: scale(1.01);
+    box-shadow: var(--shadow-light);
+}
+
+tbody tr:nth-child(even) {
+    background-color: rgba(247, 250, 252, 0.5);
+}
+
+/* Enlaces de acción mejorados */
+.actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.actions a {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.actions a[href*="edit"] {
+    background: linear-gradient(135deg, var(--warning-color), #f6ad55);
+    color: white;
+}
+
+.actions a[href*="delete"] {
+    background: linear-gradient(135deg, var(--danger-color), #fc8181);
+    color: white;
+}
+
+.actions a:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+/* Select mejorado */
+select {
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--surface-color);
+    font-size: 0.9rem;
+    outline: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    min-width: 120px;
+}
+
+select:focus {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+select:hover {
+    border-color: var(--primary-color);
+}
+
+/* Opciones de estado con colores */
+option[value="Pendiente"] {
+    color: var(--warning-color);
+}
+
+option[value="Confirmada"] {
+    color: var(--success-color);
+}
+
+option[value="Cancelada"] {
+    color: var(--danger-color);
+}
+
+/* Form styling */
+form {
+    margin: 0;
+    display: inline-block;
+}
+
+/* Sección mejorada */
+section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+}
+
+/* Mensaje cuando no hay citas */
+.no-appointments {
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 1.1rem;
+    padding: 3rem;
+    background: linear-gradient(135deg, rgba(66, 153, 225, 0.1), rgba(116, 75, 162, 0.1));
+    border-radius: 12px;
+    border: 2px dashed var(--border-color);
+}
+
+/* Badges de estado */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-pendiente {
+    background: linear-gradient(135deg, #fef5e7, #fed7aa);
+    color: #9a3412;
+}
+
+.status-confirmada {
+    background: linear-gradient(135deg, #f0fff4, #c6f6d5);
+    color: #276749;
+}
+
+.status-cancelada {
+    background: linear-gradient(135deg, #fef2f2, #fecaca);
+    color: #991b1b;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    main {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    .table-container {
+        margin: 0 -1.5rem;
+        border-radius: 0;
+    }
+    
+    th, td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    nav {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    nav a {
+        width: 200px;
+        justify-content: center;
+    }
+    
+    main {
+        padding: 1rem;
+    }
+    
+    .actions {
+        flex-direction: column;
+    }
+    
+    .actions a {
+        text-align: center;
+        justify-content: center;
+    }
+    
+    th, td {
+        padding: 0.5rem 0.25rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Hacer la tabla más responsiva en móviles */
+    table {
+        font-size: 0.8rem;
+    }
+    
+    th:nth-child(n+4),
+    td:nth-child(n+4) {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        padding: 1rem;
+    }
+    
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    main {
+        margin: 0.5rem;
+        padding: 0.75rem;
+        border-radius: 12px;
+    }
+    
+    section {
+        padding: 1rem;
+    }
+    
+    /* Mostrar solo las columnas más importantes en pantallas muy pequeñas */
+    th:not(:first-child):not(:nth-child(2)):not(:nth-child(10)):not(:last-child),
+    td:not(:first-child):not(:nth-child(2)):not(:nth-child(10)):not(:last-child) {
+        display: none;
+    }
+}
+
+/* Animaciones sutiles */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+section {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Efectos de hover para mejor UX */
+td:hover {
+    background-color: rgba(66, 153, 225, 0.05);
+}
+
+/* Estilo para el contenedor de formulario */
+.form-container {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+}
+
+/* Loading state para selects */
+select:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Focus styles para accesibilidad */
+a:focus,
+select:focus {
+    outline: 2px solid var(--secondary-color);
+    outline-offset: 2px;
+}

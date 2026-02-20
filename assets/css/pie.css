@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,200i,300,300i,400,400i,600,600i,700,700i,900,900i&display=swap');
+
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    font-family: 'Source Sans Pro', sans-serif; 
+}
+
+body {
+    background: #f0f8ff;
+    transition: background-color 0.5s ease;
+}
+
+/* Footer Styling */
+.container-footer {
+    width: 100%;
+    padding: 40px 0;
+    background: #222;
+    margin-top: 60px;
+    border-top: 4px solid #107d91;
+}
+
+.container-footer footer {
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 20px;
+}
+
+.container-footer .redes-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.container-footer .redes-footer .icon-redes-footer {
+    font-size: 22px;
+    margin: 20px;
+    background: #efefef;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    color: #a2a2a2;
+    transition: all 0.3s ease;
+}
+
+.container-footer .redes-footer .icon-redes-footer:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+}
+
+footer .redes-footer .fa-facebook-f:hover {
+    background: #41579A;
+    color: #fff;
+}
+
+footer .redes-footer .fa-google-plus-g:hover {
+    background: #DE4C34;
+    color: #fff;
+}
+
+footer .redes-footer .fa-instagram:hover {
+    background: linear-gradient(to top right, #FCDE30, #E9712A, #D2313B, #AE4198, #7540A1, #5443A8);
+    color: #fff;
+}
+
+footer .redes-footer .fa-whatsapp:hover {
+    background: #25D366;
+    color: #fff;
+}
+
+.container-footer footer hr {
+    margin-top: 20px;
+    border: none;
+    height: 1px;
+    background: #c0c0c07a;
+}
+
+.container-footer h4 {
+    text-align: center;
+    margin-top: 40px;
+    color: #ccc;
+    font-weight: 400;
+    line-height: 1.6;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.copyright {
+    text-align: center;
+    margin-top: 20px;
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1220px) {
+    .container-footer footer {
+        max-width: 1000px;
+        padding: 0 20px;
+    }
+}
