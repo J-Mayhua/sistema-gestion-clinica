@@ -154,7 +154,7 @@ function escaparAcceso($valor): string
     </div>
 </main>
 
-<?php require_once __DIR__ .  '/clinica/views/cabecera/pie.php'; ?>
+<?php require_once __DIR__ . '/../cabecera/pie.php'; ?>
 
 <script src="/clinica/assets/js/acceso.js"></script>
 <script>

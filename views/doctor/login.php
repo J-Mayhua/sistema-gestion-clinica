@@ -100,7 +100,7 @@
 
 </div><!-- /login-wrapper -->
 
-<?php require_once __DIR__ . '/clinica/views/cabecera/pie.php'; ?>
+<?php require_once __DIR__ . '/../cabecera/pie.php'; ?>
 
 <script>
 function togglePass() {
