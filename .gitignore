@@ -1,109 +1,11 @@
-# .gitignore - Archivos y carpetas a ignorar en Git
-
 # Environment variables and secrets
 .env
 .env.local
 .env.*.local
 .env.php
-.env
 .env.*
 !.env.example
+
+# Configuración local con credenciales de XAMPP
 config/config.local.php
-
-# IDE and Editor files
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
-*.swp
-*.swo
-*~
-.DS_Store
-Thumbs.db
-
-# OS files
-.DS_Store
-.AppleDouble
-.LSOverride
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-
-# Composer (PHP dependency manager)
-vendor/
-composer.lock
-
-# Node/NPM (if used in future)
 node_modules/
-npm-debug.log
-yarn-error.log
-package-lock.json
-
-# Logs and temp files
-logs/
-*.log
-*.bak
-*.tmp
-
-# Database backups and dumps
-*.sql
-!BASE DE DATOS/base_de_datos.sql
-db_backup/
-SQL/
-
-# Configuration files (contain credentials)
-config/conexion.php
-
-# Build and dist folders
-build/
-dist/
-.build/
-
-# Temporary upload folders
-uploads/tmp/
-temp/
-
-# Cache
-cache/
-.cache/
-
-# Testing coverage
-coverage/
-.coverage
-
-# PHP temporary files
-phpunit.xml
-.phpunit.result.cache
-
-# Session files
-session/
-
-# Deployment scripts (contain credentials)
-deploy-prod.sh
-deploy-staging.sh
-.htaccess.prod
-
-# IDE workspace settings (often have paths)
-.vscode/settings.json
-.idea/workspace.xml
-
-# Git internals
-.git/
-
-# Specific sensitive files
-config/database.php
-config/secrets.php
-.credentials
-api_keys.txt
-
-# If using Docker
-docker-compose.override.yml
-.dockerignore
-
-# Generated documentation
-docs/generated/
-api-docs/
-
-# Temporary files from testing
-test-uploads/
-test-backup/
