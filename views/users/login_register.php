@@ -40,7 +40,7 @@ function escaparAcceso($valor): string
 </head>
 <body class="acceso-page">
 
-<?php include $_SERVER['DOCUMENT_ROOT'] . '/clinica/views/cabecera/cabecera.php'; ?>
+<?php require_once __DIR__ . '/../cabecera/cabecera.php'; ?>
 
 <main class="acceso-main">
 
