@@ -274,23 +274,97 @@ define('DB_PASSWORD', '');           // XAMPP: vacía por defecto
 
 ## Seguridad
 
-| Amenaza | Medida aplicada |
-|---------|-----------------|
-| Contraseñas expuestas | Hash con `password_hash()` (bcrypt) y verificación con `password_verify()`. |
-| Inyección SQL | Consultas preparadas de PDO con parámetros enlazados. |
-| XSS | `htmlspecialchars()` al mostrar datos y `strip_tags()` al recibirlos. |
-| Acceso no autorizado | Comprobación de sesión al inicio de cada vista protegida. |
-| Validación de datos | Validación en el navegador (HTML5/JavaScript) y de nuevo en el servidor (`filter_var`, etc.). La validación del servidor es la que garantiza la integridad. |
-| Transporte | Se recomienda HTTPS en producción. |
+Esta sección resume las medidas implementadas y el resultado de una revisión interna de las rutas críticas (autorización, IDOR, CSRF y concurrencia). No sustituye una auditoría de seguridad independiente.
 
-Ejemplo de consulta preparada:
+### Protección de rutas
+
+**Pacientes**
+
+| Ruta | Protección |
+|------|------------|
+| `patient_dashboard.php` | Valida la sesión del paciente. |
+| `patient_request_form.php` | Valida la sesión y comprueba con `getDisponibleFuturoById()` que el horario siga disponible. |
+| `store_cita.php` | Token CSRF, reserva atómica con `FOR UPDATE` y validación del horario. |
+| `view_appointment.php` | Verifica que `usuario_id` de la cita coincida con el de la sesión. |
+| `cancel_appointment.php` | Token CSRF y `cancelForPatient()`, que valida la propiedad de la cita. |
+| `patient_appointment_history.php` | Valida la sesión y filtra por `usuario_id`. |
+
+**Doctores**
+
+| Ruta | Protección |
+|------|------------|
+| `doctor/dashboard.php` | Valida `$_SESSION['doctor_id']`. |
+| `doctor/doctor_appointments.php` | Token CSRF, filtro por `doctor_id` y control de transiciones de estado. |
+| `edit_appointment.php` | Verifica que `doctor_id` de la cita coincida con el de la sesión, más token CSRF. |
+| `delete_appointment.php` | `cancelAppointmentForDoctor()` valida la propiedad de la cita, más token CSRF. |
+
+**Públicas**
+
+`index.php`, `especialidades.php` y `nosotros.php` no requieren sesión. Reciben las cabeceras de seguridad definidas en `.htaccess`.
+
+### Mecanismos implementados
+
+| Amenaza | Medida |
+|---------|--------|
+| **IDOR** (acceso a recursos de otros usuarios) | Cada ruta que recibe un ID comprueba que el recurso pertenezca al usuario de la sesión antes de mostrarlo o modificarlo. |
+| **Condiciones de carrera** en reservas y cancelaciones | Transacciones con `SELECT ... FOR UPDATE` en `createFromAvailableSlot()`, `cancelForPatient()` y `cancelForDoctor()`. `updateForDoctor()` valida las transiciones de estado dentro de la transacción. |
+| **CSRF** | Todos los formularios POST incluyen `csrf_token`, verificado con `validarCsrf()` antes de cada operación crítica. |
+| **Inyección SQL** | Consultas preparadas de PDO con parámetros enlazados. |
+| **XSS** | `htmlspecialchars()` al mostrar datos y `strip_tags()` al guardarlos. |
+| **Clickjacking** | Cabecera `X-Frame-Options: SAMEORIGIN`. |
+| **MIME sniffing** | Cabecera `X-Content-Type-Options: nosniff`. |
+| **Contraseñas expuestas** | Hash bcrypt con `password_hash()` y verificación con `password_verify()`. |
+| **Datos inválidos** | Validación de tipos (`filter_var` con `FILTER_VALIDATE_INT`), de fechas (`DateTime::createFromFormat()`) y de longitudes máximas. Se repite siempre en el servidor, aunque exista validación en el navegador. |
+
+Cabeceras configuradas en `.htaccess`:
+
+```apache
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set X-Content-Type-Options "nosniff"
+```
+
+### Código clave
+
+**Reserva atómica de una cita** (`Appointment::createFromAvailableSlot`)
 
 ```php
-$query = "SELECT * FROM registrar_citas WHERE usuario_id = :usuario_id";
-$stmt  = $this->conn->prepare($query);
-$stmt->bindParam(":usuario_id", $id, PDO::PARAM_INT);
-$stmt->execute();
+$this->conn->beginTransaction();
+
+// 1. Bloquear el horario hasta el commit
+$slotQuery = "SELECT disponibilidad_id FROM tabla_disponibilidad
+              WHERE disponibilidad_id = :disponibilidad_id
+                AND doctor_id = :doctor_id
+                AND estado = 'libre'
+              FOR UPDATE";
+
+// 2. Insertar la cita
+// 3. Marcar el horario como 'ocupado'
+// 4. commit(), o rollBack() si algo falla
+
+$this->conn->commit();
 ```
+
+**Validación de propiedad** (`view_appointment.php`)
+
+```php
+$appointment = $userController->getAppointmentByIddd((int) $_GET['id']);
+
+if (!$appointment || (int) $appointment['usuario_id'] !== (int) $_SESSION['usuario_id']) {
+    header("Location: patient_appointment_history.php");
+    exit();
+}
+```
+
+### Recomendaciones antes de publicar en producción
+
+Estas medidas no forman parte de la revisión anterior; se recomienda evaluarlas:
+
+- Servir toda la aplicación por **HTTPS** y añadir la cabecera `Strict-Transport-Security`.
+- Configurar las cookies de sesión con `HttpOnly`, `Secure` y `SameSite`.
+- Llamar a `session_regenerate_id(true)` al iniciar sesión.
+- Añadir una política `Content-Security-Policy`.
+- Limitar los intentos de inicio de sesión fallidos.
+- Usar en producción un usuario de MySQL con permisos mínimos.
 
 ## Rendimiento
 
@@ -311,7 +385,6 @@ Estos valores corresponden al entorno probado; en otros equipos pueden variar.
 
 ## Limitaciones conocidas
 
-- **Overbooking:** la disponibilidad se valida consultando `tabla_disponibilidad` antes de insertar la cita, pero sin transacciones. Dos solicitudes simultáneas para el mismo horario podrían pasar la validación. Ver [Mejoras futuras](#mejoras-futuras).
 - **Sesiones:** dependen de PHP; si Apache se reinicia, los usuarios deben iniciar sesión de nuevo.
 - **Pruebas:** las pruebas realizadas son manuales; no hay pruebas automatizadas.
 
@@ -319,7 +392,6 @@ Estos valores corresponden al entorno probado; en otros equipos pueden variar.
 
 **Corto plazo**
 
-- [ ] Transacciones con `SELECT ... FOR UPDATE` al reservar citas, para eliminar el overbooking.
 - [ ] Índice en `registrar_citas (usuario_id, estado)`.
 - [ ] Registro de errores de conexión en un archivo de log.
 - [ ] Pruebas automatizadas.
@@ -375,11 +447,11 @@ Antes de enviarlo, verifica que la documentación esté actualizada y que los ca
 
 ## Autor y licencia
 
-**Autor:** [Mayhua Palomino Jose adolfo]
-**Contacto:** [correo] · [GitHub](https://github.com/J-Mayhua) · [LinkedIn](https://linkedin.com/in/tu-perfil)
+**Autor:** [Tu nombre]
+**Contacto:** [correo] · [GitHub](https://github.com/tu-usuario) · [LinkedIn](https://linkedin.com/in/tu-perfil)
 
 Proyecto distribuido bajo la licencia **MIT**. Consulta el archivo `LICENSE` para más detalles.
 
 ---
 
-**Versión:** 1.0.0 · **Última actualización:** Agosto 2026
+**Versión:** 1.0.0 · **Última actualización:** febrero 2026
