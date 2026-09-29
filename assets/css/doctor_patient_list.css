@@ -1,0 +1,223 @@
+/* Lista de pacientes: estilos limitados a esta vista */
+
+.doctor-pacientes-main,
+.doctor-pacientes-main *,
+.doctor-pacientes-main *::before,
+.doctor-pacientes-main *::after {
+    box-sizing: border-box;
+}
+
+.doctor-pacientes-main {
+    width: 100%;
+    min-width: 0;
+    min-height: 100vh;
+    padding: 150px 20px 72px;
+    background:
+        radial-gradient(circle at 85% 12%,
+            rgba(59, 130, 246, 0.22),
+            transparent 30%),
+        linear-gradient(145deg,
+            #0f1e50 0%,
+            #193878 54%,
+            #0f1e50 100%);
+    color: #1e293b;
+}
+
+.doctor-pacientes-main .doctor-pacientes-contenedor {
+    width: min(100%, 1120px);
+    min-width: 0;
+    margin: 0 auto;
+}
+
+/* Presentación */
+
+.doctor-pacientes-main .doctor-pacientes-intro {
+    padding: 30px 36px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 20px;
+    background: linear-gradient(125deg, #2563eb, #0f1e50);
+    box-shadow: 0 18px 38px rgba(3, 10, 38, 0.2);
+}
+
+.doctor-pacientes-main .doctor-pacientes-etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border: 1px solid rgba(110, 231, 183, 0.35);
+    border-radius: 999px;
+    background: rgba(110, 231, 183, 0.12);
+    color: #a7f3d0;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.doctor-pacientes-main .doctor-pacientes-intro h1 {
+    margin: 14px 0 8px;
+    color: #fff;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    line-height: 1.2;
+}
+
+.doctor-pacientes-main .doctor-pacientes-intro p {
+    max-width: 650px;
+    margin: 0;
+    color: #dbeafe;
+    line-height: 1.6;
+}
+
+/* Panel */
+
+.doctor-pacientes-main .doctor-pacientes-panel {
+    min-width: 0;
+    margin-top: 24px;
+    padding: 28px;
+    border: 1px solid #e5eaf3;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 16px 40px rgba(3, 10, 38, 0.18);
+}
+
+.doctor-pacientes-main .doctor-pacientes-panel-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.doctor-pacientes-main .doctor-pacientes-subtitulo {
+    color: #2563eb;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.doctor-pacientes-main .doctor-pacientes-panel h2 {
+    margin: 5px 0 0;
+    color: #172554;
+    font-size: 1.5rem;
+}
+
+.doctor-pacientes-main .doctor-pacientes-contador {
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+/* Tabla */
+
+.doctor-pacientes-main .doctor-pacientes-tabla-contenedor {
+    max-width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+}
+
+.doctor-pacientes-main .doctor-pacientes-tabla-contenedor:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 3px;
+}
+
+.doctor-pacientes-main .doctor-pacientes-tabla {
+    width: 100%;
+    min-width: 580px;
+    border-collapse: collapse;
+    background: #fff;
+    text-align: left;
+}
+
+.doctor-pacientes-main .doctor-pacientes-tabla th {
+    padding: 15px 18px;
+    border-bottom: 1px solid #dbe4f0;
+    background: #eff6ff;
+    color: #172554;
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.doctor-pacientes-main .doctor-pacientes-tabla td {
+    padding: 16px 18px;
+    border-bottom: 1px solid #edf2f7;
+    color: #334155;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.doctor-pacientes-main .doctor-pacientes-tabla tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.doctor-pacientes-main .doctor-pacientes-tabla tbody tr:hover {
+    background: #f8fbff;
+}
+
+.doctor-pacientes-main .doctor-pacientes-tabla .doctor-pacientes-nombre {
+    color: #172554;
+    font-weight: 700;
+}
+
+.doctor-pacientes-main .doctor-pacientes-citas {
+    display: inline-block;
+    min-width: 32px;
+    padding: 5px 9px;
+    border-radius: 8px;
+    background: #ecfdf5;
+    color: #047857;
+    font-weight: 800;
+    text-align: center;
+}
+
+/* Sin resultados */
+
+.doctor-pacientes-main .doctor-pacientes-vacio {
+    padding: 46px 20px;
+    text-align: center;
+}
+
+.doctor-pacientes-main .doctor-pacientes-vacio-icono {
+    display: grid;
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 16px;
+    place-items: center;
+    border-radius: 16px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 1.5rem;
+}
+
+.doctor-pacientes-main .doctor-pacientes-vacio h3 {
+    margin: 0 0 8px;
+    color: #172554;
+}
+
+.doctor-pacientes-main .doctor-pacientes-vacio p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+/* Pantallas pequeñas */
+
+@media (max-width: 800px) {
+    .doctor-pacientes-main {
+        padding: 115px 16px 60px;
+    }
+}
+
+@media (max-width: 600px) {
+    .doctor-pacientes-main .doctor-pacientes-intro {
+        padding: 25px 21px;
+    }
+
+    .doctor-pacientes-main .doctor-pacientes-panel {
+        padding: 20px 14px;
+    }
+}

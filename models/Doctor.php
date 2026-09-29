@@ -3,7 +3,7 @@ require_once __DIR__ . '/../config/conexion.php';
 
 class Doctor {
     private $conn;
-    private $table = 'doctor'; 
+    private $table = 'doctor';
 
     public $doctor_id;
     public $correo;
@@ -15,12 +15,18 @@ class Doctor {
     public $horario;
 
     public function __construct() {
-        $database = new Conexion();
-        $this->conn = $database->conectar();
-    }
+    $inicioConexion = microtime(true);
+
+    $database = new Conexion();
+    $this->conn = $database->conectar();
+
+    $GLOBALS['diagnosticoDoctorConexion'] =
+        microtime(true) - $inicioConexion;
+}
+
 
     public function create() {
-        $query = "INSERT INTO " . $this->table . " (correo, contrasena, nombres, apellidos, especialidad, telefono, horario) 
+        $query = "INSERT INTO " . $this->table . " (correo, contrasena, nombres, apellidos, especialidad, telefono, horario)
                   VALUES (:correo, :contrasena, :nombres, :apellidos, :especialidad, :telefono, :horario)";
         $stmt = $this->conn->prepare($query);
 
@@ -57,12 +63,12 @@ class Doctor {
     public function login() {
         $query = "SELECT * FROM " . $this->table . " WHERE correo = :correo";
         $stmt = $this->conn->prepare($query);
-    
+
         $this->correo = htmlspecialchars(strip_tags($this->correo));
         $stmt->bindParam(":correo", $this->correo);
-    
+
         $stmt->execute();
-    
+
         if ($stmt->rowCount() > 0) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
             if (password_verify($this->contrasena, $row['contrasena'])) {
@@ -73,18 +79,35 @@ class Doctor {
         return false;
     }
 
-    public function getPatients() {
-        $query = "SELECT * FROM registrar_citas WHERE doctor_id = :doctor_id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':doctor_id', $this->doctor_id);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+    public function getPatientsForDoctor(int $doctorId) {
+    $inicioConsulta = microtime(true);
+
+    $query = "SELECT u.usuario_id AS id, u.nombre_completo AS nombre,
+                     u.correo_electronico AS correo,
+                     COUNT(DISTINCT a.cita_id) AS citas
+              FROM registrar_citas a
+              INNER JOIN login_usuario u ON u.usuario_id = a.usuario_id
+              WHERE a.doctor_id = :doctor_id
+              GROUP BY u.usuario_id, u.nombre_completo, u.correo_electronico
+              ORDER BY u.nombre_completo";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bindValue(':doctor_id', $doctorId, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $patients = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $GLOBALS['diagnosticoDoctorConsulta'] =
+        microtime(true) - $inicioConsulta;
+
+    return $patients;
+}
+
 
     public function updateCalendar($calendar_data) {
         foreach ($calendar_data as $date => $availability) {
-            $query = "INSERT INTO tabla_disponibilidad (doctor_id, fecha, estado) 
-                      VALUES (:doctor_id, :fecha, :estado) 
+            $query = "INSERT INTO tabla_disponibilidad (doctor_id, fecha, estado)
+                      VALUES (:doctor_id, :fecha, :estado)
                       ON DUPLICATE KEY UPDATE estado = :estado";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':doctor_id', $this->doctor_id);

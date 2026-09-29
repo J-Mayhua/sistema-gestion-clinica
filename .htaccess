@@ -1,0 +1,8 @@
+# ── Seguridad: headers HTTP para rutas públicas ──────────────────────────────
+<IfModule mod_headers.c>
+    # Evita que las páginas sean embebidas en iframes de otros dominios (Clickjacking)
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # Evita que el navegador adivine el Content-Type (MIME sniffing)
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>

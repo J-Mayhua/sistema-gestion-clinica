@@ -1,148 +1,145 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agregar Paciente</title>
-    <style>
-        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+<?php
+session_start();
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Poppins", sans-serif;
-        }
+if (!isset($_SESSION['doctor_id'])) {
+    header('Location: login.php');
+    exit();
+}
 
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            background: url('../../assets/images/DOC1.jpg') no-repeat center center fixed;
-            background-size: cover;
-        }
+$titulo_pagina_doctor = 'HappyDent — Agregar paciente';
+$css_pagina_doctor = '/clinica/assets/css/doctor_add_patient.css';
 
-        header {
-            background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+require_once __DIR__ . '/../cabecera/cabecera_doctor.php';
+?>
 
-        header h1 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
+<main class="doctor-agregar-main">
+    <div class="doctor-agregar-contenedor">
 
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: 500;
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
+        <div class="doctor-agregar-intro">
+            <span class="doctor-agregar-etiqueta">
+                <i class="fas fa-user-plus" aria-hidden="true"></i>
+                Área del doctor
+            </span>
 
-        nav a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
+            <h1>Agregar nuevo paciente</h1>
 
-        main {
-            flex: 1;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin: 20px;
-            max-width: 800px;
-            margin: 100px auto 20px; /* Adjust margin for centering */
-        }
+            <p>
+                Completa los datos del paciente y revisa la información
+                antes de registrarla.
+            </p>
+        </div>
 
-        h2 {
-            font-size: 2em;
-            margin-bottom: 20px;
-            color: #333;
-        }
+        <section
+            class="doctor-agregar-panel"
+            aria-labelledby="doctor-agregar-formulario-titulo"
+        >
+            <div class="doctor-agregar-panel-titulo">
+                <h2 id="doctor-agregar-formulario-titulo">
+                    Datos del paciente
+                </h2>
+                <p>Todos los campos son obligatorios.</p>
+            </div>
 
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+            <form
+                action="add_patient.php"
+                method="post"
+                class="doctor-agregar-formulario"
+            >
+                <div class="doctor-agregar-campos">
+                    <div class="doctor-agregar-campo">
+                        <label for="dni">DNI</label>
+                        <input
+                            type="text"
+                            id="dni"
+                            name="dni"
+                            required
+                            autocomplete="off"
+                        >
+                    </div>
 
-        label {
-            font-weight: 500;
-            color: #333;
-        }
+                    <div class="doctor-agregar-campo">
+                        <label for="nombre">Nombre</label>
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
+                            required
+                            autocomplete="name"
+                        >
+                    </div>
 
-        input[type="text"],
-        input[type="date"],
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
+                    <div class="doctor-agregar-campo">
+                        <label for="fecha_nacimiento">
+                            Fecha de nacimiento
+                        </label>
+                        <input
+                            type="date"
+                            id="fecha_nacimiento"
+                            name="fecha_nacimiento"
+                            required
+                            autocomplete="bday"
+                        >
+                    </div>
 
-        input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 15px;
-            font-size: 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            align-self: center;
-        }
+                    <div class="doctor-agregar-campo">
+                        <label for="sexo">Sexo</label>
+                        <select id="sexo" name="sexo" required>
+                            <option value="" selected disabled>
+                                Selecciona una opción
+                            </option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                        </select>
+                    </div>
 
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Agregar Pacientes</h1>
-        <nav>
-            <a href="dashboard.php">Inicio</a>
-            <a href="../users/patient_appointments.php">Ver Pacientes</a>
-            <a href="logout.php">Salir</a>
-        </nav>
-    </header>
-    <main>
-        <h2>Agregar Nuevo Paciente</h2>
-        <form action="add_patient.php" method="post">
-            <label for="dni">DNI:</label>
-            <input type="text" id="dni" name="dni" required>
-            
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" required>
-            
-            <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
-            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
-            
-            <label for="sexo">Sexo:</label>
-            <select id="sexo" name="sexo" required>
-                <option value="M">Masculino</option>
-                <option value="F">Femenino</option>
-            </select>
-            
-            <label for="direccion">Dirección:</label>
-            <input type="text" id="direccion" name="direccion" required>
-            
-            <label for="telefono">Teléfono:</label>
-            <input type="text" id="telefono" name="telefono" required>
-            
-            <label for="especialidad">Especialidad:</label>
-            <input type="text" id="especialidad" name="especialidad" required>
-            
-            <input type="submit" value="Agregar Paciente">
-        </form>
-    </main>
+                    <div class="doctor-agregar-campo doctor-agregar-campo-completo">
+                        <label for="direccion">Dirección</label>
+                        <input
+                            type="text"
+                            id="direccion"
+                            name="direccion"
+                            required
+                            autocomplete="street-address"
+                        >
+                    </div>
+
+                    <div class="doctor-agregar-campo">
+                        <label for="telefono">Teléfono</label>
+                        <input
+                            type="tel"
+                            id="telefono"
+                            name="telefono"
+                            required
+                            autocomplete="tel"
+                        >
+                    </div>
+
+                    <div class="doctor-agregar-campo">
+                        <label for="especialidad">Especialidad</label>
+                        <input
+                            type="text"
+                            id="especialidad"
+                            name="especialidad"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="doctor-agregar-acciones">
+                    <p>Verifica que los datos sean correctos antes de continuar.</p>
+
+                    <button type="submit" class="doctor-agregar-enviar">
+                        <i class="fas fa-user-plus" aria-hidden="true"></i>
+                        Agregar paciente
+                    </button>
+                </div>
+            </form>
+        </section>
+
+    </div>
+</main>
+
+<?php require_once __DIR__ . '/../cabecera/pie_paciente.php'; ?>
+
 </body>
 </html>

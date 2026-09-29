@@ -1,0 +1,417 @@
+/* ═══════════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════════ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --azul: #2563eb;
+    --azul-dark: #1d4ed8;
+    --azul-hero: #0f1e50;
+    --verde: #10b981;
+    --verde-dark: #059669;
+    --verde-light: #d1fae5;
+    --menta: #6ee7b7;
+    --gris: #64748b;
+    --radio: 16px;
+
+    --text-xs: clamp(0.7rem, 1.5vw, 0.8rem);
+    --text-sm: clamp(0.85rem, 1.8vw, 0.95rem);
+    --text-base: clamp(0.95rem, 2vw, 1.05rem);
+    --text-lg: clamp(1.1rem, 2.5vw, 1.3rem);
+    --text-2xl: clamp(1.6rem, 3.5vw, 2.2rem);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Body con imagen de fondo */
+body.login-page {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    background:
+        linear-gradient(135deg,
+            rgba(10, 25, 70, 0.75) 0%,
+            rgba(37, 99, 235, 0.45) 100%),
+        url('/clinica/assets/images/DOC1.jpg') center/cover no-repeat fixed;
+    color: #1e293b;
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* ═══════════════════════════════════════════════
+   WRAPPER PRINCIPAL
+═══════════════════════════════════════════════ */
+.login-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: stretch;
+    /* Espacio para el header fijo */
+    padding-top: 120px;
+}
+
+/* ═══════════════════════════════════════════════
+   PANEL IZQUIERDO — Decorativo
+═══════════════════════════════════════════════ */
+.login-panel-left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 6%;
+}
+
+.panel-content {
+    max-width: 420px;
+    color: #fff;
+}
+
+.panel-logo {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+}
+
+.panel-content h2 {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    margin-bottom: 16px;
+    line-height: 1.2;
+}
+
+.panel-content h2 span {
+    color: var(--menta);
+}
+
+.panel-content>p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: var(--text-base);
+    margin-bottom: 36px;
+    line-height: 1.7;
+}
+
+.panel-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.panel-features li {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: var(--text-sm);
+    font-weight: 500;
+}
+
+.panel-features li i {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--menta);
+    font-size: 1rem;
+    flex-shrink: 0;
+    backdrop-filter: blur(4px);
+}
+
+/* ═══════════════════════════════════════════════
+   PANEL DERECHO — Formulario
+═══════════════════════════════════════════════ */
+.login-panel-right {
+    flex: 0 0 480px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 40px;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* ── Caja del formulario ── */
+.login-box {
+    width: 100%;
+    max-width: 380px;
+}
+
+/* ── Header del form ── */
+.login-header {
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+.login-icon {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, var(--azul), var(--azul-dark));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: #fff;
+    margin: 0 auto 20px;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.4);
+}
+
+.login-header h1 {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: var(--text-sm);
+}
+
+/* ── Alerta de error ── */
+.login-alert {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: var(--text-sm);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(4px);
+}
+
+/* ── Formulario ── */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group label {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrap>i:first-child {
+    position: absolute;
+    left: 16px;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.input-wrap input {
+    width: 100%;
+    padding: 14px 16px 14px 46px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    color: #fff;
+    font-size: var(--text-sm);
+    font-family: inherit;
+    transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+    outline: none;
+}
+
+.input-wrap input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+.input-wrap input:focus {
+    border-color: var(--menta);
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 0 0 3px rgba(110, 231, 183, 0.15);
+}
+
+/* Botón ojo contraseña */
+.toggle-pass {
+    position: absolute;
+    right: 14px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.45);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px;
+    transition: color 0.2s;
+    line-height: 1;
+}
+
+.toggle-pass:hover {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* ── Botón submit ── */
+.btn-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--verde), var(--verde-dark));
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: var(--text-base);
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 6px 24px rgba(16, 185, 129, 0.4);
+    margin-top: 8px;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(16, 185, 129, 0.55);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+}
+
+/* ── Footer del form ── */
+.login-footer {
+    text-align: center;
+    margin-top: 28px;
+}
+
+.login-footer a {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: var(--text-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+}
+
+.login-footer a:hover {
+    color: var(--menta);
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — TABLET (≤ 900px)
+═══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+    .login-wrapper {
+        flex-direction: column;
+        padding-top: 100px;
+    }
+
+    .login-panel-left {
+        padding: 50px 6% 30px;
+    }
+
+    .panel-content {
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .panel-features {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .panel-features li {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 8px;
+        flex: 0 0 auto;
+    }
+
+    .login-panel-right {
+        flex: none;
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 40px 6%;
+    }
+
+    .login-box {
+        max-width: 440px;
+        margin: 0 auto;
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — MÓVIL (≤ 600px)
+═══════════════════════════════════════════════ */
+@media (max-width: 600px) {
+    .login-wrapper {
+        padding-top: 80px;
+    }
+
+    .login-panel-left {
+        padding: 40px 5% 20px;
+    }
+
+    .panel-features {
+        display: none;
+        /* En móvil muy pequeño se ocultan para dar protagonismo al form */
+    }
+
+    .login-panel-right {
+        padding: 32px 5% 48px;
+    }
+
+    .login-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+    }
+
+    .input-wrap input {
+        font-size: 1rem;
+        /* Evita zoom en iOS */
+    }
+}
+
+/* ═══════════════════════════════════════════════
+   ACCESIBILIDAD
+═══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}

@@ -17,26 +17,22 @@ class User {
     }
 
     public function create() {
-        $query = "INSERT INTO " . $this->table . " (nombre_completo, correo_electronico, usuario, contrasena) 
-                  VALUES (:nombre_completo, :correo_electronico, :usuario, :contrasena)";
-        $stmt = $this->conn->prepare($query);
+    $query = "INSERT INTO {$this->table}
+              (nombre_completo, correo_electronico, usuario, contrasena)
+              VALUES (:nombre_completo, :correo_electronico, :usuario, :contrasena)";
 
-        $this->nombre_completo = htmlspecialchars(strip_tags($this->nombre_completo));
-        $this->correo_electronico = htmlspecialchars(strip_tags($this->correo_electronico));
-        $this->usuario = htmlspecialchars(strip_tags($this->usuario));
-        $this->contrasena = password_hash(htmlspecialchars(strip_tags($this->contrasena)), PASSWORD_BCRYPT);
+    $stmt = $this->conn->prepare($query);
 
-        $stmt->bindParam(":nombre_completo", $this->nombre_completo);
-        $stmt->bindParam(":correo_electronico", $this->correo_electronico);
-        $stmt->bindParam(":usuario", $this->usuario);
-        $stmt->bindParam(":contrasena", $this->contrasena);
+    $hash = password_hash($this->contrasena, PASSWORD_BCRYPT);
 
-        if ($stmt->execute()) {
-            return true;
-        }
-        printf("Error: %s.\n", $stmt->error);
-        return false;
-    }
+    return $stmt->execute([
+        ':nombre_completo' => $this->nombre_completo,
+        ':correo_electronico' => $this->correo_electronico,
+        ':usuario' => $this->usuario,
+        ':contrasena' => $hash,
+    ]);
+}
+
 
     public function read() {
         $query = "SELECT * FROM " . $this->table;

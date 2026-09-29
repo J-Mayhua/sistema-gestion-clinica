@@ -1,57 +1,144 @@
 <?php
 session_start();
+
 if (!isset($_SESSION['doctor_id'])) {
-    header("Location: login.php");
+    header('Location: login.php');
     exit();
 }
 
-$doctor_name = $_SESSION['doctor_name'];
+$titulo_pagina_doctor = 'HappyDent — Panel del doctor';
+$css_pagina_doctor = '/clinica/assets/css/doctor_dashboard.css';
+
+require_once __DIR__ . '/../cabecera/cabecera_doctor.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Dashboard</title>
-    <link rel="stylesheet" href="../../assets/css/docestilos.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
-<body>
-    <header>
-        <h1>Bienvenido, Dr. <?php echo htmlspecialchars($doctor_name); ?></h1>
-        <nav>
-            <a href="add_patient.php"><i class="fas fa-user-plus"></i> Agregar Paciente</a>
-            
-             <!-- <a href="dashboard.php?action=calendar"><i class="fas fa-calendar-alt"></i> Modificar Calendario</a>-->
-            <a href="../users/patient_appointments.php"><i class="fas fa-list"></i> Historia de cital del paciente</a>
-            <a href="<?= '/clinica1/controllers/DisponibilidadController.php' ?>">Gestionar Horarios</a>
-            <a href="logout.php"><i class="fas fa-lis"></i> SALIR</a>
-        </nav>
-    </header>
-    <main>
-        <section class="welcome-section">
-            <h2>Especialidades Médicas</h2>
-            <div class="specialties-grid">
-                <div class="specialty">
-                    <img src="../../assets/images/protesis.png" alt="Especialidad 1">
-                    <h3>Protesis</h3>
-                </div>
-                <div class="specialty">
-                    <img src="../../assets/images/ortodoncia.jpg" alt="Especialidad 2">
-                    <h3>Ortodoncia</h3>
-                </div>
-                <div class="specialty">
-                    <img src="../../assets/images/exodoncia.jpg" alt="Especialidad 3">
-                    <h3>Exodoncia</h3>
-                </div>
-                <div class="specialty">
-                    <img src="../../assets/images/endodoncia.jfif" alt="Especialidad 4">
-                    <h3>Endodoncia</h3>
-                </div>
+
+<main class="doctor-dashboard-main">
+    <div class="doctor-dashboard-contenedor">
+
+        <section
+            class="doctor-dashboard-hero"
+            aria-labelledby="doctor-dashboard-titulo"
+        >
+            <div class="doctor-dashboard-hero-texto">
+                <span class="doctor-dashboard-etiqueta">
+                    <i class="fas fa-user-md" aria-hidden="true"></i>
+                    Área del doctor
+                </span>
+
+                <h1 id="doctor-dashboard-titulo">
+                    Bienvenido a HappyDent
+                </h1>
+
+                <p>
+                    Desde aquí puedes acceder a las herramientas para gestionar
+                    tus pacientes, citas y horarios.
+                </p>
+            </div>
+
+            <div class="doctor-dashboard-hero-icono" aria-hidden="true">
+                <i class="fas fa-tooth"></i>
             </div>
         </section>
-    </main>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+        <section
+            class="doctor-dashboard-panel"
+            aria-labelledby="especialidades-titulo"
+        >
+            <div class="doctor-dashboard-panel-encabezado">
+                <div>
+                    <span class="doctor-dashboard-subtitulo">
+                        Nuestra atención
+                    </span>
+
+                    <h2 id="especialidades-titulo">
+                        Especialidades odontológicas
+                    </h2>
+                </div>
+
+                <p>
+                    Conoce las áreas de atención de HappyDent.
+                </p>
+            </div>
+
+            <div class="doctor-dashboard-grid">
+                <article class="doctor-dashboard-tarjeta">
+                    <div class="doctor-dashboard-imagen">
+                        <img
+                            src="/clinica/assets/images/protesis.png"
+                            alt=""
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="doctor-dashboard-tarjeta-contenido">
+                        <h3>Prótesis</h3>
+                        <p>
+                            Soluciones para recuperar la función y la apariencia
+                            de la sonrisa.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="doctor-dashboard-tarjeta">
+                    <div class="doctor-dashboard-imagen">
+                        <img
+                            src="/clinica/assets/images/ortodoncia.jpg"
+                            alt=""
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="doctor-dashboard-tarjeta-contenido">
+                        <h3>Ortodoncia</h3>
+                        <p>
+                            Atención orientada a la alineación de los dientes
+                            y la mordida.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="doctor-dashboard-tarjeta">
+                    <div class="doctor-dashboard-imagen">
+                        <img
+                            src="/clinica/assets/images/exodoncia.jpg"
+                            alt=""
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="doctor-dashboard-tarjeta-contenido">
+                        <h3>Exodoncia</h3>
+                        <p>
+                            Procedimientos de extracción dental según
+                            la evaluación clínica.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="doctor-dashboard-tarjeta">
+                    <div class="doctor-dashboard-imagen">
+                        <img
+                            src="/clinica/assets/images/endodoncia.jfif"
+                            alt=""
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="doctor-dashboard-tarjeta-contenido">
+                        <h3>Endodoncia</h3>
+                        <p>
+                            Tratamientos enfocados en el interior del diente
+                            para conservarlo cuando sea posible.
+                        </p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<?php require_once __DIR__ . '/../cabecera/pie_paciente.php'; ?>
+
 </body>
 </html>

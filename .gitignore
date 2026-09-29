@@ -5,6 +5,10 @@
 .env.local
 .env.*.local
 .env.php
+.env
+.env.*
+!.env.example
+config/config.local.php
 
 # IDE and Editor files
 .vscode/

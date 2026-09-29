@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Footer - HappyDent</title>
-    <link rel="stylesheet" href="/clinica/assets/css/pie.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
+<?php
+// views/cabecera/pie_paciente.php
+// Pie de página para el área del paciente.
+// Se incluye al final del <body> de cada vista de paciente,
+// antes del </body></html> de cierre.
+?>
 
 <footer class="footer">
 
@@ -27,20 +23,11 @@
                 <span>Happy<b>Dent</b></span>
             </div>
             <p>Clínica dental especializada comprometida con tu salud bucal. Tecnología de vanguardia y trato humano.</p>
-            <!-- Redes sociales -->
             <div class="redes">
-                <a href="#" class="red facebook"  aria-label="Facebook">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="#" class="red instagram" aria-label="Instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a href="#" class="red whatsapp"  aria-label="WhatsApp">
-                    <i class="fab fa-whatsapp"></i>
-                </a>
-                <a href="#" class="red tiktok"    aria-label="TikTok">
-                    <i class="fab fa-tiktok"></i>
-                </a>
+                <a href="#" class="red facebook"  aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="red instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="red whatsapp"  aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                <a href="#" class="red tiktok"    aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
             </div>
         </div>
 
@@ -48,11 +35,11 @@
         <div class="footer-col">
             <h5><i class="fas fa-link"></i> Enlaces rápidos</h5>
             <ul>
-                <li><a href="/clinica/index.php"><i class="fas fa-chevron-right"></i> Inicio</a></li>
+                <li><a href="/clinica/views/users/patient_dashboard.php"><i class="fas fa-chevron-right"></i> Inicio</a></li>
                 <li><a href="/clinica/views/especialidades/especialidades.php"><i class="fas fa-chevron-right"></i> Especialidades</a></li>
-                <li><a href="/clinica/views/nosotros/nosotros.php"><i class="fas fa-chevron-right"></i> Nosotros</a></li>
-                <li><a href="/clinica/views/users/login_register.php"><i class="fas fa-chevron-right"></i> Agendar cita</a></li>
-                <li><a href="/clinica/views/doctor/login.php"><i class="fas fa-chevron-right"></i> Área doctor</a></li>
+                <li><a href="/clinica/views/users/patient_appointment_history.php"><i class="fas fa-chevron-right"></i> Mis Citas</a></li>
+                <li><a href="/clinica/views/users/disponibilidad/ver_horarios.php"><i class="fas fa-chevron-right"></i> Horarios</a></li>
+                <li><a href="/clinica/views/users/logout.php"><i class="fas fa-chevron-right"></i> Salir</a></li>
             </ul>
         </div>
 
@@ -78,29 +65,18 @@
                 </li>
                 <li>
                     <i class="fas fa-phone-alt"></i>
-                    <a href="tel:+51964228100">925 758 041</a>
+                    <a href="tel:+51925758041">925 758 041</a>
                 </li>
                 <li>
                     <i class="fab fa-whatsapp"></i>
-                    <a href="https://wa.me/51964228100" target="_blank">WhatsApp directo</a>
+                    <a href="https://wa.me/51925758041" target="_blank">WhatsApp directo</a>
                 </li>
             </ul>
-
-            <!-- Horario -->
             <div class="horario">
                 <h6><i class="fas fa-clock"></i> Horario de atención</h6>
-                <div class="horario-fila">
-                    <span>Lun - Vie</span>
-                    <span class="badge-open">9am – 7pm</span>
-                </div>
-                <div class="horario-fila">
-                    <span>Sábados</span>
-                    <span class="badge-open">9am – 1pm</span>
-                </div>
-                <div class="horario-fila">
-                    <span>Domingos</span>
-                    <span class="badge-closed">Cerrado</span>
-                </div>
+                <div class="horario-fila"><span>Lun - Vie</span><span class="badge-open">9am – 7pm</span></div>
+                <div class="horario-fila"><span>Sábados</span><span class="badge-open">9am – 1pm</span></div>
+                <div class="horario-fila"><span>Domingos</span><span class="badge-closed">Cerrado</span></div>
             </div>
         </div>
 
@@ -108,17 +84,15 @@
 
     <!-- ── Barra inferior ── -->
     <div class="footer-bottom">
-        <p>© <span id="current-year"></span> <strong>HappyDent</strong> — Todos los derechos reservados</p>
+        <p>© <span id="footer-year"></span> <strong>HappyDent</strong> — Todos los derechos reservados</p>
         <p>Hecho con <span class="heart">mayhua</span> 925-758-041</p>
     </div>
 
 </footer>
 
+<link rel="stylesheet" href="/clinica/assets/css/pie.css">
 <script>
-    // Año automático
-    document.getElementById('current-year').textContent = new Date().getFullYear();
-
-    // Animación de entrada al hacer scroll
+    document.getElementById('footer-year').textContent = new Date().getFullYear();
     const footerCols = document.querySelectorAll('.footer-col');
     const obs = new IntersectionObserver((entries) => {
         entries.forEach((entry, i) => {
@@ -129,5 +103,3 @@
     }, { threshold: 0.1 });
     footerCols.forEach(col => obs.observe(col));
 </script>
-</body>
-</html>

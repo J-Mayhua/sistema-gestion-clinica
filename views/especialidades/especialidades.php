@@ -3,148 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Especialidades - HappyDent</title>
-    
-    <link rel="stylesheet" href="../../assets/css/nosotros.css">   
-   
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>HappyDent — Especialidades</title>
+    <link rel="stylesheet" href="/clinica/assets/css/cabecera.css">
+    <link rel="stylesheet" href="/clinica/assets/css/especialidades.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>    
-    <!-- Header - menu -->
-    <header>
-     <div class="hora">HORARIO: LUNES A VIERNES - 9am a 7pm / SÁBADOS - 9am a 1pm</div>
-    <div class="header-content">
-    <div class="logo">
-        <img src="../../assets/images/tarjeta.jpg" alt="Logo" class="logo-img" width="80" height="80">
-        <a href="../../index.php"> <h1>Happy<b>Dent</b></h1></a>
-    </div>
-                
-    <div class="menu" id="show-menu">
-                <nav>
-                    <ul>
-                    <li><a href="../../index.php"><div class="icon-square"><i class="fas fa-home"></i></div> INICIO</a></li>
-                   <li><a href="../especialidades/especialidades.php"><div class="icon-square"><i class="fab fa-youtube"></i></div> ESPECIALIDADES</a></li>
+<body>
 
-<li><a href="../doctor/login.php"><div class="icon-square"><i class="fas fa-headset"></i></div> DOCTOR</a></li>
-<li><a href="../users/login_register.php"><div class="icon-square"><i class="fas fa-home"></i></div> ACCEDER</a></li>
-                    </ul>
-                </nav>
-            </div>
+<?php include $_SERVER['DOCUMENT_ROOT'] . '/clinica/views/cabecera/cabecera.php'; ?>
+
+<div class="container-all" id="move-content">
+
+        <!-- ══ HERO ESPECIALIDADES ══ -->
+    <section class="hero-especialidades">
+
+        <!-- Partículas decorativas -->
+        <div class="hero-particles">
+            <span class="particle p1">🦷</span>
+            <span class="particle p2">⭐</span>
+            <span class="particle p3">✨</span>
+            <span class="particle p4">🦷</span>
         </div>
-        <div id="icon-menu">
-            <i class="fas fa-bars"></i>
+
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+
+            <!-- Tag superior -->
+            <div class="hero-tag-wrap">
+                <span class="hero-tag">
+                    <i class="fas fa-tooth"></i> Lo que ofrecemos
+                </span>
+            </div>
+
+            <!-- Título principal -->
+            <h1>
+                Nuestras<br>
+                <span class="titulo-acento">Especialidades</span>
+            </h1>
+
+            <!-- Línea decorativa -->
+            <div class="hero-linea">
+                <span></span><i class="fas fa-tooth"></i><span></span>
+            </div>
+
+            <!-- Descripción -->
+            <p class="hero-desc">
+                Tecnología de vanguardia y especialistas certificados<br>
+                para cada tratamiento que necesitas.
+            </p>
+
+            <!-- Badges de confianza -->
+            <div class="hero-trust">
+                <div class="trust-item">
+                    <i class="fas fa-user-md"></i>
+                    <span>+8 Especialistas</span>
+                </div>
+                <div class="trust-sep"></div>
+                <div class="trust-item">
+                    <i class="fas fa-award"></i>
+                    <span>Certificados</span>
+                </div>
+                <div class="trust-sep"></div>
+                <div class="trust-item">
+                    <i class="fas fa-star"></i>
+                    <span>5 Estrellas</span>
+                </div>
+            </div>
+
         </div>
-    </header>
 
-    <!-- Contenido Principal -->
-    <div class="container-all" id="move-content">
-        <div class="article-container-cover">
-            <h1 id="titulopag"></h1>
+        <!-- Scroll indicator -->
+        <div class="scroll-indicator">
+            <span>Desliza hacia abajo</span>
+            <i class="fas fa-chevron-down"></i>
         </div>
-        
-        <main>
-            <div class="especialidades-container">
-                <h1 class="especialidades-title">ESPECIALIDADES</h1>
-            </div>
-            <br>
-            
-            <div class="tratamiento">           
-                <img src="../../assets/images/ortodoncia.jpg" alt="Ortodoncia">
-                <h2>Ortodoncia</h2>
-                <p>Se encarga de los problemas de los dientes y la mandíbula. La atención dental con ortodoncia incluye el uso de dispositivos, tales como aparatos (frenos), para enderezar los dientes.</p>
-            </div>
-            
-            <div class="tratamiento">
-                <img src="../../assets/images/endodoncia.jfif" alt="Endodoncia">
-                <h2>Endodoncia</h2>
-                <p>Es un procedimiento que tiene como finalidad preservar las piezas dañadas, evitando así su pérdida. Para ello se extrae la pulpa dental y la cavidad resultante, se rellena y sella con material inerte y biocompatible.</p>
-            </div>
-            
-            <div class="tratamiento">
-                <img src="../../assets/images/restauracion dental.png" alt="Restauración Dental">
-                <h2>Restauración Dental</h2>
-                <p>Es para poder devolver al diente dañado la forma y la función perdida mediante el uso de técnicas y materiales específicos.</p>
-            </div>
-            
-            <div class="tratamiento">
-                <img src="../../assets/images/profilaxis.jfif" alt="Profilaxis">
-                <h2>Profilaxis</h2>
-                <p>Su objetivo es prevenir patologías periodontales potencialmente graves. De esta manera se encarga de la limpieza bucal, eliminando el sarro y las bacterias del paciente.</p>
-            </div>
-            
-            <div class="tratamiento">
-                <img src="../../assets/images/protesis.png" alt="Prótesis">
-                <h2>Prótesis</h2>
-                <p>Es una estructura metálica con varios dientes artificiales que se ancla a los dientes y sirve para reponer las piezas ausentes o estructuras óseas que se han reabsorbido a lo largo del tiempo con la pérdida de los dientes naturales.</p>
-            </div>
-            
-            <div class="tratamiento">
-                <img src="../../assets/images/implante.jpg" alt="Implantes">
-                <h2>Implante</h2>
-                <p>Es un procedimiento que reemplaza las raíces de los dientes con pernos metálicos que parecen tornillos y reemplaza el diente faltante, o dañado, con un diente artificial que tiene el mismo aspecto y que cumple la misma función que los dientes reales.</p>
-            </div>
-            
-            <div class="tratamiento">
-                <img src="../../assets/images/exodoncia.jpg" alt="Exodoncia">
-                <h2>Exodoncia</h2>
-                <p>Es una técnica odontológica que consiste en la extracción de un diente dañado o que presenta problemas para la salud bucodental del paciente. Se trata de una intervención quirúrgica basada en la extracción de una pieza dental de la cavidad bucal.</p>
-            </div>
-        </main>
-    </div>
 
-    <!-- Botón ir arriba -->
-    <div id="button-up">
-        <i class="fas fa-chevron-up"></i>
-    </div>
+    </section>
 
-    <!-- Scripts -->
-    <script src="../../assets/js/script_menu.js"></script>
-    <script src="../../assets/js/especialidades.js"></script>
-    <script>
-        // Script para el menú móvil
-document.getElementById('icon-menu').addEventListener('click', function() {
-    var menu = document.getElementById('show-menu');
-    var container = document.getElementById('move-content');
-    
-    menu.classList.toggle('show-lateral');
-    container.classList.toggle('move-container-all');
-});
 
-// Script para botón ir arriba
-window.addEventListener('scroll', function() {
-    var buttonUp = document.getElementById('button-up');
-    if (window.pageYOffset > 600) {
-        buttonUp.classList.add('show');
-    } else {
-        buttonUp.classList.remove('show');
-    }
-});
+    <!-- ══ GRID ESPECIALIDADES ══ -->
+    <section class="especialidades-section">
+        <div class="seccion-header fade-in">
+            <span class="tag">Tratamientos</span>
+            <h2>¿Qué <span>tratamos</span>?</h2>
+            <p>Contamos con las últimas tecnologías para cuidar tu salud bucal de forma integral</p>
+        </div>
 
-document.getElementById('button-up').addEventListener('click', function() {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
+        <div class="esp-grid">
+
+            <div class="esp-card fade-in">
+                <div class="esp-img-wrap">
+                    <img src="/clinica/assets/images/ortodoncia.jpg" alt="Ortodoncia" loading="lazy">
+                    <div class="esp-icon"><i class="fas fa-teeth"></i></div>
+                </div>
+                <div class="esp-body">
+                    <h3>Ortodoncia</h3>
+                    <p>Se encarga de los problemas de los dientes y la mandíbula, usando dispositivos como aparatos y frenos para enderezar los dientes y lograr una sonrisa armoniosa.</p>
+                    <span class="esp-tag">Correctiva</span>
+                </div>
+            </div>
+
+            <div class="esp-card fade-in">
+                <div class="esp-img-wrap">
+                    <img src="/clinica/assets/images/endodoncia.jfif" alt="Endodoncia" loading="lazy">
+                    <div class="esp-icon"><i class="fas fa-tooth"></i></div>
+                </div>
+                <div class="esp-body">
+                    <h3>Endodoncia</h3>
+                    <p>Preserva las piezas dañadas extrayendo la pulpa dental y sellando la cavidad con material biocompatible, evitando la pérdida del diente.</p>
+                    <span class="esp-tag">Conservadora</span>
+                </div>
+            </div>
+
+            <div class="esp-card fade-in">
+                <div class="esp-img-wrap">
+                    <img src="/clinica/assets/images/restauracion dental.png" alt="Restauración Dental" loading="lazy">
+                    <div class="esp-icon"><i class="fas fa-fill-drip"></i></div>
+                </div>
+                <div class="esp-body">
+                    <h3>Restauración Dental</h3>
+                    <p>Devuelve al diente dañado su forma y función original mediante técnicas y materiales de alta calidad adaptados a cada caso.</p>
+                    <span class="esp-tag">Estética</span>
+                </div>
+            </div>
+
+            <div class="esp-card fade-in">
+                <div class="esp-img-wrap">
+                    <img src="/clinica/assets/images/profilaxis.jfif" alt="Profilaxis" loading="lazy">
+                    <div class="esp-icon"><i class="fas fa-shield-alt"></i></div>
+                </div>
+                <div class="esp-body">
+                    <h3>Profilaxis</h3>
+                    <p>Previene patologías periodontales mediante limpieza bucal profesional, eliminando sarro y bacterias para mantener una boca completamente sana.</p>
+                    <span class="esp-tag">Preventiva</span>
+                </div>
+            </div>
+
+            <div class="esp-card fade-in">
+                <div class="esp-img-wrap">
+                    <img src="/clinica/assets/images/protesis.png" alt="Prótesis" loading="lazy">
+                    <div class="esp-icon"><i class="fas fa-teeth-open"></i></div>
+                </div>
+                <div class="esp-body">
+                    <h3>Prótesis</h3>
+                    <p>Estructura con dientes artificiales que se ancla a los dientes naturales para reponer piezas ausentes y recuperar la función masticatoria completa.</p>
+                    <span class="esp-tag">Rehabilitadora</span>
+                </div>
+            </div>
+
+            <div class="esp-card fade-in">
+                <div class="esp-img-wrap">
+                    <img src="/clinica/assets/images/implante.jpg" alt="Implantes" loading="lazy">
+                    <div class="esp-icon"><i class="fas fa-plus-circle"></i></div>
+                </div>
+                <div class="esp-body">
+                    <h3>Implantes</h3>
+                    <p>Reemplaza raíces dentales con pernos de titanio y dientes artificiales de aspecto y función idénticos a los naturales. La solución más duradera.</p>
+                    <span class="esp-tag">Avanzada</span>
+                </div>
+            </div>
+
+
+        </div>
+    </section>
+
+    <!-- ══ CTA ══ -->
+    <section class="cta-esp fade-in">
+        <div class="cta-diente">🦷</div>
+        <h2>¿No sabes qué tratamiento necesitas?</h2>
+        <p>Agenda una evaluación gratuita y nuestros especialistas te orientarán.</p>
+        <a href="/clinica/views/users/login_register.php" class="btn-primary btn-grande">
+            <i class="fas fa-calendar-check"></i> Agendar evaluación gratis
+        </a>
+    </section>
+
+    <div id="button-up"><i class="fas fa-chevron-up"></i></div>
+
+</div><!-- /container-all -->
+
+<script src="/clinica/assets/js/script_menu.js"></script>
+<script src="/clinica/assets/js/cabecera.js"></script>
+<script>
+document.documentElement.classList.add('js-ready');
+
+const esMobil = window.innerWidth <= 600;
+
+/* ── Fade-in observer ── */
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+        }
     });
-});
+}, { threshold: esMobil ? 0 : 0.1, rootMargin: '0px 0px -30px 0px' });
 
-// Script MODIFICADO para ocultar/mostrar header SOLO cuando esté arriba
-var header = document.querySelector('header');
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-window.addEventListener('scroll', function() {
-    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    
-    // Solo mostrar header cuando el scroll esté en la parte superior (primeros 50px)
-    if (scrollTop <= 50) {
-        header.classList.add('header-visible');
-        header.classList.remove('header-hidden');
-    } else {
-        // Ocultar header cuando se baje del top
-        header.classList.add('header-hidden');
-        header.classList.remove('header-visible');
-    }
+/* ── Botón arriba ── */
+const btnUp = document.getElementById('button-up');
+window.addEventListener('scroll', () => {
+    btnUp.classList.toggle('show', window.scrollY > 300);
 });
-        </script>
+btnUp.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+</script>
+
 </body>
 </html>
-<?php include '../cabecera/pie.php'; ?>
+<?php include $_SERVER['DOCUMENT_ROOT'] . '/clinica/views/cabecera/pie.php'; ?>

@@ -5,7 +5,7 @@ $action = isset($_GET['action']) ? $_GET['action'] : null;
 
 switch ($controller) {
     case 'doctor':
-        require_once '../controllers/DoctorController.php';
+        require_once __DIR__ . '/../controllers/DoctorController.php';
         $controller = new DoctorController();
         switch ($action) {
             case 'create':
@@ -27,7 +27,7 @@ switch ($controller) {
         }
         break;
     case 'user':
-        require_once '../controllers/UserController.php';
+        require_once __DIR__ . '/../controllers/UserController.php';
         $controller = new UserController();
         switch ($action) {
             case 'create':
@@ -45,7 +45,7 @@ switch ($controller) {
         }
         break;
     case 'appointment':
-        require_once '../controllers/AppointmentController.php';
+        require_once __DIR__ . '/../controllers/AppointmentController.php';
         $controller = new AppointmentController();
         switch ($action) {
             case 'create':

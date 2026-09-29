@@ -1,121 +1,116 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Login Doctor</title>
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: url('../../assets/images/DOC1.jpg') no-repeat center center fixed;
-            background-size: cover;
-        }
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
-        .login-box {
-            background-color: rgba(255, 255, 255, 0.1); /* Transparencia del cuadro */
-            padding: 40px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .login-box h1 {
-            margin-bottom: 20px;
-            font-size: 32px;
-            color: white; /* Color blanco para el texto */
-            font-weight: bold;
-        }
-        .login-box a {
-            color: white; /* Letra blanca */
-            text-decoration: none; /* Sin subrayado */
-            font-size: 36px; /* Tamaño de fuente aumentado */
-        }
-        .login-box a:hover {
-            text-decoration: underline; /* Subrayado al pasar el mouse */
-        }
-        .login-box label {
-            display: none; /* Ocultar etiquetas para simplificar el diseño */
-        }
-        .login-box input[type="email"],
-        .login-box input[type="password"] {
-            width: 80%;
-            padding: 15px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        .login-box input[type="submit"] {
-            background-color: white; /* Fondo blanco */
-            color: black; /* Letra negra */
-            padding: 15px 30px;
-            border: 1px solid black; /* Borde negro */
-            border-radius: 25px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 20px;
-        }
-        .login-box input[type="submit"]:hover {
-            background-color: #f0f0f0; /* Color de fondo ligeramente gris para el hover */
-        }
-        .login-box .input-container {
-            position: relative;
-            width: 80%;
-            margin: 10px auto;
-        }
-        .login-box .input-container input {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 25px;
-            font-size: 16px;
-            padding-left: 50px; /* Espacio para el ícono */
-        }
-        .login-box .input-container .icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 20px;
-            color: #aaa;
-            
-        }
-        .message {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #f5c6cb;
-            border-radius: 5px;
-            text-align: center;
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HappyDent — Acceso Doctor</title>
+    <link rel="stylesheet" href="/clinica/assets/css/cabecera.css">
+    <link rel="stylesheet" href="/clinica/assets/css/login-doctor.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/clinica/assets/js/cabecera.js"></script>
+
 </head>
-<body>
-<div class="login-container">
-        <div class="login-box">
-            <h1><a href="../../index.php">Iniciar Sesión</a></h1><br><br>
-            <?php if (!empty($message)): ?>
-                <div class="message"><?php echo htmlspecialchars($message); ?></div>
-            <?php endif; ?>
-            <form action="../../public/index.php?controller=doctor&action=login" method="POST">
-                <div class="input-container">
-                    <i class="fas fa-user icon"></i>
-                    <input type="email" name="correo" placeholder="Correo" required>
-                </div>
-                <div class="input-container">
-                    <i class="fas fa-lock icon"></i>
-                    <input type="password" name="contrasena" placeholder="Contraseña" required>
-                </div>
-                <input type="submit" value="Acceder">
-            </form>
+<body class="login-page">
+
+<?php include $_SERVER['DOCUMENT_ROOT'] . '/clinica/views/cabecera/cabecera.php'; ?>
+
+<div class="login-wrapper">
+
+    <!-- Panel izquierdo — decorativo -->
+    <div class="login-panel-left">
+        <div class="panel-content">
+            <div class="panel-logo">🦷</div>
+            <h2>Portal <span>Médico</span></h2>
+            <p>Accede a tu panel de gestión de citas, pacientes y tratamientos.</p>
+            <ul class="panel-features">
+                <li><i class="fas fa-calendar-check"></i> Gestión de citas</li>
+                <li><i class="fas fa-users"></i> Historial de pacientes</li>
+                <li><i class="fas fa-chart-line"></i> Reportes clínicos</li>
+                <li><i class="fas fa-shield-alt"></i> Acceso seguro</li>
+            </ul>
         </div>
     </div>
+
+    <!-- Panel derecho — formulario -->
+    <div class="login-panel-right">
+        <div class="login-box">
+
+            <div class="login-header">
+                <div class="login-icon">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <h1>Acceso Doctor</h1>
+                <p>Ingresa tus credenciales para continuar</p>
+            </div>
+
+            <?php if (!empty($message)): ?>
+                <div class="login-alert">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <?php echo htmlspecialchars($message); ?>
+                </div>
+            <?php endif; ?>
+
+            <form action="/clinica/public/index.php?controller=doctor&action=login"
+                  method="POST" class="login-form">
+
+                <div class="input-group">
+                    <label for="correo">Correo electrónico</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-envelope"></i>
+                        <input
+                            type="email"
+                            id="correo"
+                            name="correo"
+                            placeholder="doctor@happydent.com"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="contrasena">Contraseña</label>
+                    <div class="input-wrap">
+                        <i class="fas fa-lock"></i>
+                        <input
+                            type="password"
+                            id="contrasena"
+                            name="contrasena"
+                            placeholder="••••••••"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="toggle-pass" tabindex="-1"
+                                onclick="togglePass()">
+                            <i class="fas fa-eye" id="eye-icon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Ingresar al panel
+                </button>
+
+            </form>
+
+
+
+        </div>
+    </div>
+
+</div><!-- /login-wrapper -->
+
+<?php include $_SERVER['DOCUMENT_ROOT'] . '/clinica/views/cabecera/pie.php'; ?>
+
+<script>
+function togglePass() {
+    const input   = document.getElementById('contrasena');
+    const icon    = document.getElementById('eye-icon');
+    const visible = input.type === 'password';
+    input.type    = visible ? 'text' : 'password';
+    icon.className = visible ? 'fas fa-eye-slash' : 'fas fa-eye';
+}
+</script>
+
 </body>
 </html>

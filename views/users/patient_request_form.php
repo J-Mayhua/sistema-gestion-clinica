@@ -1,144 +1,251 @@
 <?php
 session_start();
 
-// Verificar que el usuario esté logueado
-if (!isset($_SESSION['usuario']) || !isset($_SESSION['usuario_id'])) {
-    header("Location: login_register.php");
+if (!isset($_SESSION['usuario'], $_SESSION['usuario_id'])) {
+    header('Location: login_register.php');
     exit();
 }
 
-// Obtener doctor_id y fecha desde la URL (si vienen)
-$doctor_id = isset($_GET['doctor_id']) ? intval($_GET['doctor_id']) : null;
-$fecha = isset($_GET['fecha']) ? $_GET['fecha'] : null;
+$disponibilidad_id = isset($_GET['disponibilidad_id'])
+    ? (int) $_GET['disponibilidad_id']
+    : 0;
 
-// Cargar doctores
-require_once __DIR__ . '/../../controllers/DoctorController.php';
-$doctorController = new DoctorController();
-$doctors = $doctorController->getDoctors(); // Asegúrate de que este método devuelva todos los doctores
+require_once __DIR__ . '/../../models/Disponibilidad.php';
+require_once __DIR__ . '/../../config/csrf.php';
 
-// Cargar mensaje de sesión (éxito o error)
-$message = '';
-$messageType = '';
+$availabilityModel = new Disponibilidad();
+$slot = $availabilityModel->getDisponibleFuturoById($disponibilidad_id);
 
-if (isset($_SESSION['message'])) {
-    $message = $_SESSION['message'];
-    $messageType = $_SESSION['message_type'];
-    unset($_SESSION['message']);
-    unset($_SESSION['message_type']);
+if (!$slot) {
+    $_SESSION['message'] = 'El horario seleccionado ya no está disponible.';
+    $_SESSION['message_type'] = 'error';
+
+    header('Location: patient_dashboard.php?action=calendar');
+    exit();
 }
+
+$doctor_id_pre = (int) $slot['doctor_id'];
+$fecha = $slot['fecha'] ?? null;
+
+$message = $_SESSION['message'] ?? '';
+$messageType = $_SESSION['message_type'] ?? '';
+unset($_SESSION['message'], $_SESSION['message_type']);
+
+$nombrePaciente = $_SESSION['usuario_nombre'] ?? $_SESSION['usuario'];
+
+$nombreDoctor = trim(
+    (string) ($slot['doctor_nombres'] ?? '') . ' ' .
+    (string) ($slot['doctor_apellidos'] ?? '')
+);
+
+$csrfToken = csrfToken();
+
+$claseMensaje = $messageType === 'success'
+    ? 'solicitud-mensaje-exito'
+    : 'solicitud-mensaje-error';
+
+$titulo_pagina_paciente = 'HappyDent — Solicitar cita';
+$css_pagina_paciente = '/clinica/assets/css/patient_request_form.css';
+
+require_once __DIR__ . '/../cabecera/cabecera_paciente.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Solicitar Cita</title>
-    <link rel="stylesheet" href="../../assets/css/formulario.css">
-    <link rel="stylesheet" href="../../assets/css/patient_styles.css">
-    <style>
-        .message {
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-        }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-    </style>
-</head>
-<body>
-<header>
-    <div class="logo">HappyDent</div>
-    <div class="user-actions">
-        <a href="logout.php">SALIR</a>
-    </div>
-</header>
-<main>
-    <div class="column left">
-        <img src="<?php echo htmlspecialchars($_SESSION['profile_image'] ?? '../../assets/images/tarjeta.jpg'); ?>" alt="Foto de perfil" class="profile-image">
-        <a href="patient_dashboard.php" class="action-button">INICIO</a>
-        <a href="patient_appointment_history.php" class="action-button">MIS CITAS</a>
-    </div>
-    <form action="store_cita.php" method="post" class="appointment-form">
-        <h2>Formulario de Solicitud de Cita</h2>
-        <?php if ($message): ?>
-            <div class="message <?= $messageType ?>">
-                <?= htmlspecialchars($message) ?>
+
+<main class="solicitud-main">
+    <div class="solicitud-contenedor">
+
+        <a class="solicitud-volver" href="disponibilidad/ver_horarios.php">
+            <span aria-hidden="true">←</span>
+            Volver a horarios
+        </a>
+
+        <div class="solicitud-panel">
+
+            <div class="solicitud-encabezado">
+                <span class="solicitud-etiqueta">Solicitud de cita</span>
+                <h1>Completa tus datos</h1>
+                <p>
+                    Revisa el horario elegido y llena el formulario
+                    para enviar tu solicitud.
+                </p>
             </div>
-        <?php endif; ?>
 
-        <input type="hidden" name="patient_id" value="<?= htmlspecialchars($_SESSION['usuario_id']) ?>">
-        <input type="hidden" name="estado" value="Pendiente">
+            <?php if ($message !== ''): ?>
+                <div
+                    class="solicitud-mensaje <?= $claseMensaje ?>"
+                    role="<?= $claseMensaje === 'solicitud-mensaje-error' ? 'alert' : 'status' ?>"
+                >
+                    <?= htmlspecialchars((string) $message, ENT_QUOTES, 'UTF-8') ?>
+                </div>
+            <?php endif; ?>
 
-        <div class="form-group">
-            <label for="nombre_completo">Nombre Completo:</label>
-            <input type="text" id="nombre_completo" name="insertar_nombre"
-                   value="<?= htmlspecialchars($_SESSION['usuario_nombre']) ?>" readonly>
+            <section
+                class="solicitud-resumen"
+                aria-labelledby="solicitud-resumen-titulo"
+            >
+                <h2 id="solicitud-resumen-titulo">Horario seleccionado</h2>
+
+                <div class="solicitud-resumen-grid">
+                    <div>
+                        <span>Especialidad</span>
+                        <strong>
+                            <?= htmlspecialchars(
+                                (string) ($slot['especialidad'] ?? ''),
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Doctor</span>
+                        <strong>
+                            <?= htmlspecialchars(
+                                $nombreDoctor,
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>
+                        </strong>
+                    </div>
+
+                    <?php if ($fecha): ?>
+                        <div>
+                            <span>Fecha seleccionada</span>
+                            <strong>
+                                <?= htmlspecialchars(
+                                    (string) $fecha,
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                ) ?>
+                            </strong>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </section>
+
+            <form
+                action="store_cita.php"
+                method="post"
+                class="solicitud-formulario"
+            >
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="<?= htmlspecialchars(
+                        (string) $csrfToken,
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>"
+                >
+
+                <input
+                    type="hidden"
+                    name="disponibilidad_id"
+                    value="<?= $disponibilidad_id ?>"
+                >
+
+                <input
+                    type="hidden"
+                    name="doctor_id"
+                    value="<?= $doctor_id_pre ?>"
+                >
+
+                <h2>Datos del paciente</h2>
+
+                <div class="solicitud-campos">
+                    <div class="solicitud-campo solicitud-campo-completo">
+                        <label for="nombre_completo">Nombre completo</label>
+                        <input
+                            type="text"
+                            id="nombre_completo"
+                            name="insertar_nombre"
+                            value="<?= htmlspecialchars(
+                                (string) $nombrePaciente,
+                                ENT_QUOTES,
+                                'UTF-8'
+                            ) ?>"
+                            readonly
+                        >
+                    </div>
+
+                    <div class="solicitud-campo">
+                        <label for="dni">DNI</label>
+                        <input
+                            type="text"
+                            id="dni"
+                            name="dni"
+                            required
+                            maxlength="20"
+                            autocomplete="off"
+                            placeholder="Ingresa tu DNI"
+                        >
+                    </div>
+
+                    <div class="solicitud-campo">
+                        <label for="fecha_nacimiento">Fecha de nacimiento</label>
+                        <input
+                            type="date"
+                            id="fecha_nacimiento"
+                            name="fecha_nacimiento"
+                            required
+                            autocomplete="bday"
+                        >
+                    </div>
+
+                    <div class="solicitud-campo">
+                        <label for="sexo">Sexo</label>
+                        <select id="sexo" name="sexo" required>
+                            <option value="" selected disabled>
+                                Selecciona una opción
+                            </option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                        </select>
+                    </div>
+
+                    <div class="solicitud-campo">
+                        <label for="telefono">Teléfono</label>
+                        <input
+                            type="tel"
+                            id="telefono"
+                            name="telefono"
+                            required
+                            maxlength="20"
+                            autocomplete="tel"
+                            placeholder="Ingresa tu teléfono"
+                        >
+                    </div>
+
+                    <div class="solicitud-campo solicitud-campo-completo">
+                        <label for="direccion">Dirección</label>
+                        <input
+                            type="text"
+                            id="direccion"
+                            name="direccion"
+                            required
+                            maxlength="255"
+                            autocomplete="street-address"
+                            placeholder="Ingresa tu dirección"
+                        >
+                    </div>
+                </div>
+
+                <div class="solicitud-acciones">
+                    <p>Verifica tus datos antes de continuar.</p>
+
+                    <input
+                        type="submit"
+                        name="request_appointment"
+                        value="Solicitar cita"
+                        class="solicitud-enviar"
+                    >
+                </div>
+            </form>
+
         </div>
-
-        <div class="form-group">
-            <label for="dni">DNI:</label>
-            <input type="text" id="dni" name="dni" required>
-        </div>
-
-        <div class="form-group">
-            <label for="fecha_nacimiento">Fecha de Nacimiento:</label>
-            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
-        </div>
-
-        <div class="form-group">
-            <label for="sexo">Sexo:</label>
-            <select id="sexo" name="sexo" required>
-                <option value="M">Masculino</option>
-                <option value="F">Femenino</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="direccion">Dirección:</label>
-            <input type="text" id="direccion" name="direccion" required>
-        </div>
-
-        <div class="form-group">
-            <label for="telefono">Teléfono:</label>
-            <input type="text" id="telefono" name="telefono" required>
-        </div>
-
-        <div class="form-group">
-            <label for="especialidad">Especialidad a la que quiera solicitar:</label>
-            <input type="text" id="especialidad" name="especialidad" required>
-        </div>
-
-        <div class="form-group">
-            <label for="doctor_id">Seleccionar Doctor:</label>
-            <select id="doctor_id" name="doctor_id" required>
-                <?php foreach ($doctors as $doctor): ?>
-                    <option value="<?= htmlspecialchars($doctor['doctor_id']) ?>"
-                        <?= $doctor['doctor_id'] == $doctor_id ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($doctor['nombres'] . ' ' . $doctor['apellidos']) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-
-        <?php if ($fecha): ?>
-            <input type="hidden" name="fecha" value="<?= htmlspecialchars($fecha) ?>">
-            <div class="form-group">
-                <label>Fecha seleccionada:</label>
-                <input type="text" value="<?= htmlspecialchars($fecha) ?>" readonly>
-            </div>
-        <?php endif; ?>
-
-        <div class="form-group">
-            <input type="submit" name="request_appointment" value="Solicitar Cita" class="submit-btn">
-        </div>
-    </form>
+    </div>
 </main>
+
+<?php require_once __DIR__ . '/../cabecera/pie_paciente.php'; ?>
+
 </body>
 </html>

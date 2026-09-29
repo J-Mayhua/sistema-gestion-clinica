@@ -2,6 +2,7 @@
 if (!class_exists('Disponibilidad')) {
     require_once __DIR__ . '/../models/Disponibilidad.php';
 }
+require_once __DIR__ . '/../config/csrf.php';
 
 class DisponibilidadController {
     private $model;
@@ -14,12 +15,13 @@ class DisponibilidadController {
     public function index() {
         session_start();
         if (!isset($_SESSION['doctor_id'])) {
-            header("Location: /clinica1/views/doctor/login.php");
+            header("Location: /clinica/views/doctor/login.php");
             exit();
         }
 
         $doctor_id = $_SESSION['doctor_id'];
         $horarios = $this->model->getByDoctorId($doctor_id);
+        $csrfToken = csrfToken();
 
         include __DIR__ . '/../views/doctor/disponibilidad/index.php';
     }
@@ -28,9 +30,15 @@ class DisponibilidadController {
     public function guardar() {
         header('Content-Type: application/json');
         session_start();
-        
+
         if (!isset($_SESSION['doctor_id'])) {
             echo json_encode(["success" => false, "message" => "No autorizado"]);
+            exit();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !validarCsrf($_POST['csrf_token'] ?? null)) {
+            http_response_code(403);
+            echo json_encode(["success" => false, "message" => "Solicitud no válida"]);
             exit();
         }
 
@@ -94,12 +102,12 @@ class DisponibilidadController {
                 $fechaFormateada = date('d/m/Y', strtotime($h['fecha']));
                 $horaInicio = date('H:i', strtotime($h['hora_inicio']));
                 $horaFin = date('H:i', strtotime($h['hora_fin']));
-                
+
                 // Determinar clase de estado
                 $estadoClass = 'estado-libre';
                 $estadoEmoji = '🟢';
                 $estadoTexto = 'Libre';
-                
+
                 if ($h['estado'] == 'ocupado') {
                     $estadoClass = 'estado-ocupado';
                     $estadoEmoji = '🟡';
@@ -109,7 +117,7 @@ class DisponibilidadController {
                     $estadoEmoji = '🔴';
                     $estadoTexto = 'Con Cita';
                 }
-                
+
                 echo '<div class="horario-item">';
                 echo '<div class="horario-info">';
                 echo '<div class="horario-fecha">📅 ' . $fechaFormateada . '</div>';
@@ -141,9 +149,15 @@ class DisponibilidadController {
     public function cambiarEstado() {
         header('Content-Type: application/json');
         session_start();
-        
+
         if (!isset($_SESSION['doctor_id'])) {
             echo json_encode(["success" => false, "message" => "No autorizado"]);
+            exit();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !validarCsrf($_POST['csrf_token'] ?? null)) {
+            http_response_code(403);
+            echo json_encode(["success" => false, "message" => "Solicitud no válida"]);
             exit();
         }
 
@@ -154,7 +168,7 @@ class DisponibilidadController {
 
         $disponibilidad_id = $_POST['disponibilidad_id'];
         $estado = $_POST['estado'];
-        
+
         // Validar que el estado sea válido
         $estadosValidos = ['libre', 'ocupado', 'cita'];
         if (!in_array($estado, $estadosValidos)) {
@@ -162,7 +176,7 @@ class DisponibilidadController {
             exit();
         }
 
-        if ($this->model->actualizarEstado($disponibilidad_id, $estado)) {
+        if ($this->model->actualizarEstado($disponibilidad_id, $estado, (int)$_SESSION['doctor_id'])) {
             $mensajes = [
                 'libre' => 'Estado cambiado a Libre exitosamente',
                 'ocupado' => 'Estado cambiado a Ocupado exitosamente',
@@ -179,9 +193,15 @@ class DisponibilidadController {
     public function eliminar() {
         header('Content-Type: application/json');
         session_start();
-        
+
         if (!isset($_SESSION['doctor_id'])) {
             echo json_encode(["success" => false, "message" => "No autorizado"]);
+            exit();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !validarCsrf($_POST['csrf_token'] ?? null)) {
+            http_response_code(403);
+            echo json_encode(["success" => false, "message" => "Solicitud no válida"]);
             exit();
         }
 
@@ -213,7 +233,7 @@ if (basename($_SERVER['PHP_SELF']) == 'DisponibilidadController.php') {
     $controller = new DisponibilidadController();
 
     $action = isset($_GET['action']) ? $_GET['action'] : 'index';
-    
+
     if (method_exists($controller, $action)) {
         $controller->{$action}();
     } else {

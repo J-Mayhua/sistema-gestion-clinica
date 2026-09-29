@@ -1,0 +1,440 @@
+/* Gestionar citas del doctor: estilos limitados a esta vista */
+
+.doctor-citas-main,
+.doctor-citas-main *,
+.doctor-citas-main *::before,
+.doctor-citas-main *::after {
+    box-sizing: border-box;
+}
+
+.doctor-citas-main {
+    width: 100%;
+    min-width: 0;
+    min-height: 100vh;
+    padding: 150px 20px 72px;
+    background:
+        radial-gradient(circle at 85% 12%,
+            rgba(59, 130, 246, 0.22),
+            transparent 30%),
+        linear-gradient(145deg, #0f1e50 0%, #193878 54%, #0f1e50 100%);
+    color: #1e293b;
+}
+
+.doctor-citas-main .doctor-citas-contenedor {
+    width: min(100%, 1200px);
+    min-width: 0;
+    margin: 0 auto;
+}
+
+/* Presentación */
+
+.doctor-citas-main .doctor-citas-intro {
+    padding: 30px 36px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 20px;
+    background: linear-gradient(125deg, #2563eb, #0f1e50);
+    box-shadow: 0 18px 38px rgba(3, 10, 38, 0.2);
+}
+
+.doctor-citas-main .doctor-citas-etiqueta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border: 1px solid rgba(110, 231, 183, 0.35);
+    border-radius: 999px;
+    background: rgba(110, 231, 183, 0.12);
+    color: #a7f3d0;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.doctor-citas-main .doctor-citas-intro h1 {
+    margin: 14px 0 8px;
+    color: #fff;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    line-height: 1.2;
+}
+
+.doctor-citas-main .doctor-citas-intro p {
+    max-width: 680px;
+    margin: 0;
+    color: #dbeafe;
+    line-height: 1.6;
+}
+
+/* Mensajes */
+
+.doctor-citas-main .doctor-citas-mensaje {
+    margin-top: 20px;
+    padding: 13px 17px;
+    border-radius: 11px;
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.doctor-citas-main .doctor-citas-mensaje-exito {
+    border: 1px solid #a7f3d0;
+    background: #ecfdf5;
+    color: #065f46;
+}
+
+.doctor-citas-main .doctor-citas-mensaje-error {
+    border: 1px solid #fecdd3;
+    background: #fff1f2;
+    color: #9f1239;
+}
+
+/* Panel y tabla */
+
+.doctor-citas-main .doctor-citas-panel {
+    min-width: 0;
+    margin-top: 24px;
+    padding: 28px;
+    border: 1px solid #e5eaf3;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 16px 40px rgba(3, 10, 38, 0.18);
+}
+
+.doctor-citas-main .doctor-citas-panel-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 22px;
+}
+
+.doctor-citas-main .doctor-citas-subtitulo {
+    color: #2563eb;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.doctor-citas-main .doctor-citas-panel h2 {
+    margin: 5px 0 0;
+    color: #172554;
+    font-size: 1.5rem;
+}
+
+.doctor-citas-main .doctor-citas-contador {
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.doctor-citas-main .doctor-citas-tabla-contenedor {
+    max-width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+}
+
+.doctor-citas-main .doctor-citas-tabla-contenedor:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 3px;
+}
+
+.doctor-citas-main .doctor-citas-tabla {
+    width: 100%;
+    min-width: 1080px;
+    border-collapse: collapse;
+    background: #fff;
+    text-align: left;
+}
+
+.doctor-citas-main .doctor-citas-tabla th {
+    padding: 14px 13px;
+    border-bottom: 1px solid #dbe4f0;
+    background: #eff6ff;
+    color: #172554;
+    font-size: 0.78rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.doctor-citas-main .doctor-citas-tabla td {
+    max-width: 220px;
+    padding: 14px 13px;
+    border-bottom: 1px solid #edf2f7;
+    color: #334155;
+    font-size: 0.83rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    vertical-align: middle;
+}
+
+.doctor-citas-main .doctor-citas-tabla tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.doctor-citas-main .doctor-citas-tabla tbody tr:hover {
+    background: #f8fbff;
+}
+
+.doctor-citas-main .doctor-citas-estado {
+    display: inline-block;
+    padding: 6px 9px;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.doctor-citas-main .doctor-citas-estado-pendiente {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.doctor-citas-main .doctor-citas-estado-confirmada {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.doctor-citas-main .doctor-citas-estado-cancelada {
+    background: #ffe4e6;
+    color: #be123c;
+}
+
+.doctor-citas-main .doctor-citas-estado-completada {
+    background: #d1fae5;
+    color: #047857;
+}
+
+.doctor-citas-main .doctor-citas-acciones {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+}
+
+.doctor-citas-main .doctor-citas-form-cancelar {
+    margin: 0;
+}
+
+.doctor-citas-main .doctor-citas-boton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 35px;
+    padding: 7px 10px;
+    border: 0;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.doctor-citas-main .doctor-citas-boton-editar {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.doctor-citas-main .doctor-citas-boton-editar:hover {
+    background: #dbeafe;
+}
+
+.doctor-citas-main .doctor-citas-boton-cancelar {
+    background: #fff1f2;
+    color: #be123c;
+}
+
+.doctor-citas-main .doctor-citas-boton-cancelar:hover {
+    background: #ffe4e6;
+}
+
+.doctor-citas-main .doctor-citas-sin-acciones {
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
+.doctor-citas-main .doctor-citas-vacio {
+    padding: 46px 20px;
+    text-align: center;
+}
+
+.doctor-citas-main .doctor-citas-vacio>i {
+    color: #2563eb;
+    font-size: 2rem;
+}
+
+.doctor-citas-main .doctor-citas-vacio h3 {
+    margin: 15px 0 7px;
+    color: #172554;
+}
+
+.doctor-citas-main .doctor-citas-vacio p {
+    margin: 0;
+    color: #64748b;
+}
+
+/* Diálogo de modificación */
+
+.doctor-citas-main .doctor-citas-dialog {
+    width: min(680px, calc(100% - 32px));
+    max-width: none;
+    max-height: calc(100dvh - 32px);
+    margin: auto;
+    padding: 28px;
+    overflow-y: auto;
+    border: 1px solid #dbeafe;
+    border-radius: 19px;
+    background: #fff;
+    color: #1e293b;
+    box-shadow: 0 25px 70px rgba(3, 10, 38, 0.35);
+}
+
+.doctor-citas-main .doctor-citas-dialog::backdrop {
+    background: rgba(8, 18, 50, 0.72);
+}
+
+.doctor-citas-main .doctor-citas-dialog-icono {
+    display: grid;
+    width: 46px;
+    height: 46px;
+    margin-bottom: 13px;
+    place-items: center;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.doctor-citas-main .doctor-citas-dialog-encabezado h2 {
+    margin: 0 0 6px;
+    color: #172554;
+    font-size: 1.45rem;
+}
+
+.doctor-citas-main .doctor-citas-dialog-encabezado p {
+    margin: 0 0 23px;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.doctor-citas-main .doctor-citas-campos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 17px;
+}
+
+.doctor-citas-main .doctor-citas-campos label {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+    color: #334155;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.doctor-citas-main .doctor-citas-campo-completo {
+    grid-column: 1 / -1;
+}
+
+.doctor-citas-main .doctor-citas-campos input,
+.doctor-citas-main .doctor-citas-campos select {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 43px;
+    padding: 9px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #fff;
+    color: #1e293b;
+    font: inherit;
+    font-size: 0.91rem;
+    font-weight: 400;
+}
+
+.doctor-citas-main .doctor-citas-campos input:focus,
+.doctor-citas-main .doctor-citas-campos select:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
+.doctor-citas-main .doctor-citas-dialog-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e8edf6;
+}
+
+.doctor-citas-main .doctor-citas-dialog-acciones button {
+    min-height: 42px;
+    padding: 10px 17px;
+    border: 0;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.88rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.doctor-citas-main .doctor-citas-boton-volver {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.doctor-citas-main .doctor-citas-boton-guardar {
+    background: #059669;
+    color: #fff;
+}
+
+.doctor-citas-main .doctor-citas-boton-guardar:hover {
+    background: #047857;
+}
+
+.doctor-citas-main button:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 3px;
+}
+
+/* Pantallas pequeñas */
+
+@media (max-width: 800px) {
+    .doctor-citas-main {
+        padding: 115px 16px 60px;
+    }
+}
+
+@media (max-width: 600px) {
+    .doctor-citas-main .doctor-citas-intro {
+        padding: 25px 21px;
+    }
+
+    .doctor-citas-main .doctor-citas-panel {
+        padding: 20px 14px;
+    }
+
+    .doctor-citas-main .doctor-citas-dialog {
+        padding: 22px 17px;
+    }
+
+    .doctor-citas-main .doctor-citas-campos {
+        grid-template-columns: 1fr;
+    }
+
+    .doctor-citas-main .doctor-citas-campo-completo {
+        grid-column: auto;
+    }
+
+    .doctor-citas-main .doctor-citas-dialog-acciones {
+        flex-wrap: wrap;
+    }
+
+    .doctor-citas-main .doctor-citas-dialog-acciones button {
+        flex: 1;
+    }
+}
