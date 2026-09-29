@@ -17,7 +17,7 @@ $css_pagina_paciente = $css_pagina_paciente ?? null;
 
     <title><?= htmlspecialchars($titulo_pagina_paciente, ENT_QUOTES, 'UTF-8') ?></title>
 
-    
+
     <link rel="stylesheet" href="/clinica/assets/css/cabecera.css">
 
     <?php if ($css_pagina_paciente !== null): ?>
@@ -31,5 +31,6 @@ $css_pagina_paciente = $css_pagina_paciente ?? null;
 <body>
 
 <?php require __DIR__ . '/cabecera.php'; ?>
+
 
 <script src="/clinica/assets/js/cabecera.js"></script>

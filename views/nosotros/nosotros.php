@@ -171,4 +171,4 @@ btnUp.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smoot
 
 </body>
 </html>
-<?php require_once __DIR__ . '/clinica/views/cabecera/pie.php'; ?>
+<?php require_once __DIR__ . '/../cabecera/pie.php'; ?>

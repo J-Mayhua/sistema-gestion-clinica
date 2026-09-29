@@ -1,3 +1,9 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$paciente_autenticado = isset($_SESSION['usuario_id']);
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -211,4 +217,4 @@ btnUp.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smoot
 
 </body>
 </html>
-<?php require_once __DIR__ .  '/clinica/views/cabecera/pie.php'; ?>
+<?php require_once __DIR__ . '/../cabecera/pie.php'; ?>
