@@ -41,6 +41,11 @@
                 </div>
                 <h1>Acceso Doctor</h1>
                 <p>Ingresa tus credenciales para continuar</p>
+                <div class="credenciales-prueba">
+                <strong>Credenciales de prueba:</strong>
+                <span><b>Correo:</b> doctor@gmail.com</span>
+                <span><b>Contraseña:</b> Doctor1234</span>
+            </div>
             </div>
 
             <?php if (!empty($message)): ?>

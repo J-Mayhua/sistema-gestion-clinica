@@ -77,7 +77,13 @@ function escaparAcceso($valor): string
                 <h3>¿Aún no tienes cuenta?</h3>
                 <p>Regístrate y agenda tu primera consulta gratis</p>
                 <button type="button" id="btn__registrarse">Registrarse</button>
+                 <p class="credenciales-prueba">
+                    Usuerio de prueba: User<br>
+                    Contraseña: User1234
+                </p>
             </div>
+
+
         </div>
 
         <!-- Formularios -->
@@ -201,6 +207,17 @@ document.getElementById('btn__registrarse')?.click();
     background: #d1e7dd;
     border: 1px solid #badbcc;
 }
+.credenciales-prueba {
+    margin: 10px 0 0;
+    padding: 0;
+    color: #fff;
+    font-size: 12px;
+    line-height: 1.5;
+    opacity: 0.9;
+    background: none;
+    border: none;
+}
+
 </style>
 
 </body>
