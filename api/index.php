@@ -1,13 +1,15 @@
 <?php
 
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$path = rtrim($path, '/') ?: '/';
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
+$path = '/' . trim($path, '/');
 
-/*
- * Páginas del sitio.
- * Ajusta cada ruta de archivo para que coincida con dónde está
- * guardada realmente esa página en tu proyecto.
- */
+// Acepta tanto /especialidades como /clinica/especialidades
+if ($path === '/clinica') {
+    $path = '/';
+} elseif (strpos($path, '/clinica/') === 0) {
+    $path = substr($path, strlen('/clinica'));
+}
+
 $pages = [
     '/'               => __DIR__ . '/../index.php',
     '/especialidades' => __DIR__ . '/../views/especialidades/especialidades.php',
@@ -16,19 +18,15 @@ $pages = [
     '/acceder'        => __DIR__ . '/../views/users/login_register.php',
 ];
 
-if (isset($pages[$path]) && file_exists($pages[$path])) {
-    require $pages[$path];
-    exit;
-}
-
-/*
- * Las peticiones de controladores, como
- * ?controller=doctor&action=login, se envían a tu enrutador actual.
- */
 if (isset($_GET['controller'])) {
     require __DIR__ . '/../public/index.php';
     exit;
 }
 
+if (isset($pages[$path]) && file_exists($pages[$path])) {
+    require $pages[$path];
+    exit;
+}
+
 http_response_code(404);
-echo 'Página no encontrada';
+echo 'Página no encontrada: ' . htmlspecialchars($path, ENT_QUOTES, 'UTF-8');
