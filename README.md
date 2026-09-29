@@ -274,7 +274,7 @@ define('DB_PASSWORD', '');           // XAMPP: vacía por defecto
 
 ## Seguridad
 
-Esta sección resume las medidas implementadas y el resultado de una revisión interna de las rutas críticas (autorización, IDOR, CSRF y concurrencia). No sustituye una auditoría de seguridad independiente.
+Esta sección resume las medidas implementadas y el resultado de una revisión interna de las rutas críticas (autorización, IDOR, CSRF y concurrencia). No sustituye una auditoría de seguridad independiente. La guía completa, la lista de verificación para producción y el procedimiento para reportar vulnerabilidades están en [SECURITY.md](SECURITY.md).
 
 ### Protección de rutas
 
@@ -447,8 +447,8 @@ Antes de enviarlo, verifica que la documentación esté actualizada y que los ca
 
 ## Autor y licencia
 
-**Autor:** [Tu nombre]
-**Contacto:** [correo] · [GitHub](https://github.com/tu-usuario) · [LinkedIn](https://linkedin.com/in/tu-perfil)
+**Autor:** [Jose Adolfo Mayhua Palomino]
+**Contacto:** [joseadolfomayhua01@gmail.com] · [GitHub](https://github.com/J-Mayhua) · [LinkedIn](https://linkedin.com/in/tu-perfil)
 
 Proyecto distribuido bajo la licencia **MIT**. Consulta el archivo `LICENSE` para más detalles.
 

@@ -1,669 +1,388 @@
-# SECURITY.md - Guía de Seguridad
+# Política de seguridad — HappyDent
 
-## 🔐 Postura de Seguridad
+Este documento describe cómo reportar vulnerabilidades, qué medidas de seguridad tiene HappyDent y qué falta configurar antes de publicarlo en producción.
 
-HappyDent implementa **seguridad en capas (Defense in Depth)** con múltiples niveles de protección contra las vulnerabilidades OWASP Top 10.
+## Contenido
 
-```
-┌─────────────────────────────────────────────────────────┐
-│  Cliente (Browser)                                      │
-│  - Validación HTML5 (UX)                                │
-│  - HTTPS enforced                                       │
-└─────────────────────────────────────────────────────────┘
-                        ↓
-┌─────────────────────────────────────────────────────────┐
-│  HTTP Transport                                         │
-│  - HTTPS with TLS 1.2+ (en producción)                 │
-│  - HSTS header (en producción)                         │
-└─────────────────────────────────────────────────────────┘
-                        ↓
-┌─────────────────────────────────────────────────────────┐
-│  Web Server (Apache)                                    │
-│  - restrict .php files visibility                      │
-│  - Rate limiting (en producción)                       │
-│  - .htaccess rules                                     │
-└─────────────────────────────────────────────────────────┘
-                        ↓
-┌─────────────────────────────────────────────────────────┐
-│  Application Layer (PHP)                                │
-│  - Input validation & sanitization                     │
-│  - Authentication & authorization                      │
-│  - Session management                                  │
-│  - Error handling (no info disclosure)                 │
-└─────────────────────────────────────────────────────────┘
-                        ↓
-┌─────────────────────────────────────────────────────────┐
-│  Database Layer                                         │
-│  - Prepared statements (prevent SQL injection)         │
-│  - Least privilege (usuarios limitados)                │
-│  - Encryption at rest (en producción)                  │
-└─────────────────────────────────────────────────────────┘
-```
+- [Reportar una vulnerabilidad](#reportar-una-vulnerabilidad)
+- [Estado de la seguridad](#estado-de-la-seguridad)
+- [Controles implementados](#controles-implementados)
+- [Recomendaciones para producción](#recomendaciones-para-producción)
+- [Gestión de secretos](#gestión-de-secretos)
+- [Pruebas de seguridad manuales](#pruebas-de-seguridad-manuales)
+- [Respuesta a incidentes](#respuesta-a-incidentes)
 
----
+## Reportar una vulnerabilidad
 
-## 🛡️ Vulnerabilidades OWASP Top 10 y Mitigaciones
+Si encuentras una vulnerabilidad, **no la publiques en un issue abierto**. Envía un correo a **[correo-de-seguridad]** con:
 
-### 1. A01:2021 - Broken Access Control
+- Descripción del problema y su impacto.
+- Pasos para reproducirlo (ruta afectada, datos de entrada, resultado obtenido).
+- Versión o commit donde lo detectaste.
 
-**Riesgo:** Usuario A accede a datos de Usuario B
+Responderemos para confirmar la recepción y coordinar la corrección antes de cualquier divulgación pública.
 
-**Mitigación Implementada:**
+## Estado de la seguridad
+
+HappyDent aplica seguridad en capas. La tabla distingue lo que **ya está implementado** de lo que **se recomienda** añadir para producción.
+
+| Capa | Control | Estado |
+|------|---------|--------|
+| Aplicación | Comprobación de sesión y de propiedad del recurso en cada ruta protegida | Implementado |
+| Aplicación | Tokens CSRF en formularios POST | Implementado |
+| Aplicación | Validación de tipos, fechas y longitudes en el servidor | Implementado |
+| Aplicación | Escape de salida con `htmlspecialchars()` | Implementado |
+| Aplicación | Reservas y cancelaciones con transacciones y `FOR UPDATE` | Implementado |
+| Base de datos | Consultas preparadas con PDO | Implementado |
+| Base de datos | Contraseñas con hash bcrypt | Implementado |
+| Servidor | Cabeceras `X-Frame-Options` y `X-Content-Type-Options` | Implementado |
+| Transporte | HTTPS con TLS 1.2 o superior y cabecera HSTS | Recomendado |
+| Sesión | Cookies `HttpOnly`, `Secure`, `SameSite`; regeneración del ID al iniciar sesión; caducidad por inactividad | Recomendado |
+| Servidor | `Content-Security-Policy` | Recomendado |
+| Aplicación | Límite de intentos de inicio de sesión | Recomendado |
+| Aplicación | Registro de eventos de seguridad | Recomendado |
+| Base de datos | Usuario de MySQL con permisos mínimos | Recomendado |
+
+> Los elementos **Recomendados** no están confirmados como implementados. Verifícalos en el código y en la configuración del servidor antes de publicar.
+
+## Controles implementados
+
+Esta sección sigue la referencia **OWASP Top 10 (edición 2021)**. Los controles de acceso, CSRF y concurrencia se revisaron ruta por ruta; esa revisión fue interna y no sustituye una auditoría independiente.
+
+### A01 — Control de acceso
+
+**Riesgo:** un usuario accede a datos de otro (IDOR) o ejecuta acciones que no le corresponden.
+
+**Medidas:**
+
+- Toda ruta protegida comprueba la sesión antes de procesar la solicitud.
+- El ID del usuario sale siempre de la sesión, nunca de `$_GET` ni `$_POST`.
+- Toda ruta que recibe un ID de cita comprueba que pertenezca al usuario o doctor de la sesión.
+
 ```php
-// En UserController::patientDashboard()
-session_start();
-if (!isset($_SESSION['usuario'])) {
-    header("Location: login_register.php");
+$appointment = $userController->getAppointmentByIddd((int) $_GET['id']);
+
+if (!$appointment || (int) $appointment['usuario_id'] !== (int) $_SESSION['usuario_id']) {
+    header("Location: patient_appointment_history.php");
     exit();
 }
-
-// Solo obtener citas del usuario logeado
-$appointments = $appointmentModel->getPatientAppointments($_SESSION['usuario_id']);
-
-// Nunca confiar en $_GET['usuario_id']
-// ✗ INCORRECTO:
-// $user_id = $_GET['usuario_id'];  // VULNERABILITY!
-
-// ✓ CORRECTO:
-// $user_id = $_SESSION['usuario_id'];  // De sesión segura
 ```
 
-**Validaciones Adicionales:**
+Compara siempre con conversión a entero: `"5" !== 5` es `true` en PHP, y una comparación estricta entre cadena y entero deniega el acceso a usuarios legítimos.
+
+| Rol | Rutas | Comprobación |
+|-----|-------|--------------|
+| Paciente | `view_appointment.php`, `cancel_appointment.php`, `patient_appointment_history.php` | `usuario_id` de la cita igual al de la sesión |
+| Doctor | `edit_appointment.php`, `delete_appointment.php`, `doctor_appointments.php` | `doctor_id` de la cita igual al de la sesión |
+
+### A02 — Fallos criptográficos
+
+**Contraseñas:** se almacenan con bcrypt. La contraseña se hashea tal como la escribe el usuario, sin `strip_tags()` ni `htmlspecialchars()`, que alterarían el valor.
+
 ```php
-// View action requiere que el usuario sea el propietario
-public function viewAppointment($cita_id) {
-    $cita = $this->appointmentModel->getById($cita_id);
-    
-    if ($cita['usuario_id'] !== $_SESSION['usuario_id']) {
-        die("Acceso denegado");  // 403 Forbidden
-    }
-    
-    // Proceder
+// Registro
+$hash = password_hash($contrasena, PASSWORD_BCRYPT);
+
+// Inicio de sesión
+if (password_verify($contrasena, $hashGuardado)) {
+    // credenciales correctas
 }
 ```
 
-**Checklist para Revisar:**
-- [ ] ¿Todas las acciones requieren autenticación?
-- [ ] ¿Se valida ownership antes de devolver datos?
-- [ ] ¿No hay IDs secuenciales en URLs que puedan ser adivinados?
-- [ ] ¿El admin no puede acceder a paciente aleatorio?
+**Mensajes de error:** el inicio de sesión devuelve siempre el mismo mensaje ("Correo o contraseña inválidos"), sin indicar cuál de los dos falló.
 
----
+**Transporte:** ver [Recomendaciones para producción](#recomendaciones-para-producción).
 
-### 2. A02:2021 - Cryptographic Failures
+### A03 — Inyección
 
-**Riesgo:** Contraseñas en texto plano, comunicación sin encripción
+**SQL:** todas las consultas usan sentencias preparadas de PDO. Los datos del usuario nunca se concatenan en la consulta.
 
-**Mitigación Implementada:**
-
-#### 2.1 Almacenamiento de Contraseñas
 ```php
-// models/User.php - En create()
-$this->contrasena = password_hash(
-    htmlspecialchars(strip_tags($this->contrasena)),
-    PASSWORD_BCRYPT,  // Algoritmo
-    ['cost' => 10]    // Factor de trabajo (por defecto)
-);
-
-// Insertar $this->contrasena (hash) en BD
-```
-
-**BCrypt Properties:**
-- Algoritmo one-way (no reversible)
-- Auto-genera salt aleatorio
-- Adaptivo: Se ralentiza con Moore's Law
-- Ejemplo: 'password123' → '$2y$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcg7b3XeKeUxWdeS86E36P4/KFm'
-
-**Verificación en Login:**
-```php
-$stored_hash = "..."; // De base de datos
-$user_input = $_POST['contrasena'];
-
-if (password_verify($user_input, $stored_hash)) {
-    // Contraseña correcta
-    $_SESSION['usuario'] = $username;
-} else {
-    // Contraseña incorrecta
-    $_SESSION['error'] = "Email o contraseña inválidos";
-}
-```
-
-#### 2.2 Comunicación (HTTPS)
-
-**En Producción (OBLIGATORIO):**
-```apache
-# .htaccess
-# Forzar HTTPS
-RewriteEngine On
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-# HSTS Header (Google Chrome respeta)
-Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
-```
-
-**Configuración Apache:**
-```apache
-# httpd.conf
-<VirtualHost *:443>
-    ServerName clinica.com
-    SSLEngine on
-    SSLCertificateFile /etc/ssl/certs/clinica.crt
-    SSLCertificateKeyFile /etc/ssl/private/clinica.key
-    SSLCertificateChainFile /etc/ssl/certs/clinica.ca-bundle
-</VirtualHost>
-```
-
----
-
-### 3. A03:2021 - Injection (SQL, Command, LDAP)
-
-**Riesgo:** `SELECT * FROM users WHERE username = '" . $_GET['name'] . "'`
-
-**Mitigación Implementada:**
-
-#### 3.1 SQL Injection Prevention
-```php
-// ✗ VULNERABLE (Nunca usar)
-$name = $_GET['name'];
-$query = "SELECT * FROM login_usuario WHERE usuario = '$name'";
-$stmt = $conn->prepare($query);  // INCORRECTO: Aún vulnerable
+// Correcto
+$stmt = $conn->prepare("SELECT * FROM login_usuario WHERE usuario = :usuario");
+$stmt->bindParam(':usuario', $usuario, PDO::PARAM_STR);
 $stmt->execute();
 
-// ✓ SEGURO (Prepared statement)
-$query = "SELECT * FROM login_usuario WHERE usuario = :usuario";
-$stmt = $conn->prepare($query);  // Separación: estructura vs datos
-$stmt->bindParam(':usuario', $name, PDO::PARAM_STR);
-$stmt->execute();
-$result = $stmt->fetch();
+// Incorrecto: preparar una consulta que ya contiene datos no la protege
+$stmt = $conn->prepare("SELECT * FROM login_usuario WHERE usuario = '$usuario'");
 ```
 
-**Ataque Ejemplo:**
-```
-Entrada: admin' --
-Query vulnerable: 
-  SELECT * FROM login_usuario WHERE usuario = 'admin' --'
-  (El -- comenta el resto, saltando validación de contraseña)
+**XSS:** los datos se escapan con `htmlspecialchars()` al mostrarlos en HTML. Además, se aplica `strip_tags()` al guardarlos. El escape de salida es la defensa principal.
 
-Query prepared statement:
-  SELECT * FROM login_usuario WHERE usuario = ?
-  User input "admin' --" se trata como STRING LITERAL
-```
+**Validación de entrada:** tipos con `filter_var(..., FILTER_VALIDATE_INT)`, correos con `FILTER_VALIDATE_EMAIL`, fechas con `DateTime::createFromFormat()` y longitudes máximas. Se valida siempre en el servidor, aunque el navegador también valide.
 
-#### 3.2 Sanitización de Entrada
+### A04 — Diseño inseguro
+
+**Riesgo:** fallos en la lógica de negocio, como cambiar el estado de una cita sin autorización.
+
+**Medidas:**
+
+- El estado nuevo lo decide el servidor, nunca el formulario.
+- Un paciente solo puede cancelar citas en estado `Pendiente`.
+- Las transiciones de estado del doctor se validan dentro de una transacción (`updateForDoctor()`).
+- Cada operación crítica exige un token CSRF válido.
+
 ```php
-// En todos los modelos ANTES de usar en query
-$user_input = $_POST['nombre'];
+// Incorrecto: el cliente decide el estado
+$nuevoEstado = $_POST['estado'];
 
-// htmlspecialchars: Convierte <script> en &lt;script&gt;
-$safe = htmlspecialchars($user_input);
-
-// strip_tags: Remueve <tag> completamente
-$safer = strip_tags(htmlspecialchars($user_input));
-
-// PERO: Prepared statements son la defensa PRINCIPAL
+// Correcto: el servidor lo fija
+$nuevoEstado = 'Cancelada';
 ```
 
----
+**Reservas sin doble asignación:** `createFromAvailableSlot()` bloquea el horario con `SELECT ... FOR UPDATE` dentro de una transacción. `cancelForPatient()` y `cancelForDoctor()` usan el mismo mecanismo.
 
-### 4. A04:2021 - Insecure Design
-
-**Riesgo:** Lógica de negocio flawed (ej: cualquiera puede cambiar estado de cita)
-
-**Protecciones:**
 ```php
-// En AppointmentController::cancelAppointment()
-public function cancelAppointment($cita_id) {
-    // Validar ownership
-    if ($cita['usuario_id'] !== $_SESSION['usuario_id']) {
-        return UNAUTHORIZED;
-    }
-    
-    // Validar estado (solo Pendiente puede cancelarse)
-    if ($cita['estado'] !== 'Pendiente') {
-        $_SESSION['error'] = "Solo citas Pendientes pueden cancelarse";
-        return false;
-    }
-    
-    // Estado no viene de user input
-    $new_estado = 'Cancelada';  // Hardcoded
-    
-    // Update
-    return $appointmentModel->updateStatus($cita_id, $new_estado);
-}
+$this->conn->beginTransaction();
 
-// ✗ INSEGURO:
-// $new_estado = $_POST['estado'];  // User puede enviar 'Confirmada'
+// 1. Bloquear el horario hasta el commit
+$slotQuery = "SELECT disponibilidad_id FROM tabla_disponibilidad
+              WHERE disponibilidad_id = :disponibilidad_id
+                AND doctor_id = :doctor_id
+                AND estado = 'libre'
+              FOR UPDATE";
+
+// 2. Insertar la cita
+// 3. Marcar el horario como 'ocupado'
+// 4. commit(), o rollBack() si algo falla
+
+$this->conn->commit();
 ```
 
----
+### A05 — Configuración de seguridad incorrecta
 
-### 5. A05:2021 - Broken Authentication
+**Implementado:** cabeceras HTTP en `.htaccess` (requiere el módulo `mod_headers` de Apache).
 
-**Riesgo:** Sesiones débiles, contraseñas débiles, sin MFA
+```apache
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set X-Content-Type-Options "nosniff"
+```
 
-**Mitigaciones:**
+**Recomendado en producción:**
 
-#### 5.1 Gestión de Sesiones
+```ini
+; php.ini
+display_errors = Off
+log_errors = On
+error_reporting = E_ALL
+error_log = /var/log/php_errors.log
+```
+
+Mantén los archivos de configuración y los registros fuera de la carpeta pública del servidor.
+
+### A06 — Componentes vulnerables y desactualizados
+
+- Usa versiones de PHP, MySQL/MariaDB y Apache que sigan recibiendo parches de seguridad. PHP 7.4 y MySQL 5.7 ya no los reciben, por lo que no son adecuados para producción aunque el proyecto funcione con ellos.
+- Si añades dependencias con Composer, revisa las vulnerabilidades conocidas con `composer audit`.
+- Font Awesome se carga desde una versión fija (5.15.4). Revisa periódicamente las actualizaciones.
+
+### A07 — Fallos de identificación y autenticación
+
+**Implementado:** validación de formato de correo y comprobación de duplicados al registrarse; hash bcrypt; mensaje de error genérico.
+
+**Recomendado:**
+
 ```php
-// Configuración recomendada en php.ini o .htaccess
-session_start([
-    'cookie_lifetime' => 1800,        // 30 minutos
-    'cookie_secure' => true,          // HTTP Only
-    'cookie_httponly' => true,        // No accessible desde JS
-    'cookie_samesite' => 'Strict',    // CSRF protection
-    'use_strict_mode' => true,        // Regenerar ID después de login
+// Configurar la cookie de sesión antes de session_start()
+session_set_cookie_params([
+    'lifetime' => 0,
+    'path'     => '/',
+    'secure'   => true,     // solo con HTTPS
+    'httponly' => true,     // no accesible desde JavaScript
+    'samesite' => 'Lax',
 ]);
-
-// IMPORTANTE: session_regenerate_id() después de autenticación
-public function login() {
-    // ... validar credenciales ...
-    
-    session_regenerate_id(true);  // Invalida sesión anterior
-    $_SESSION['usuario_id'] = $user['usuario_id'];
-    $_SESSION['usuario'] = $user['usuario'];
-}
+ini_set('session.use_strict_mode', '1');
+session_start();
 ```
 
-#### 5.2 Logout Seguro
 ```php
-// views/users/logout.php
+// Al iniciar sesión, invalidar el ID anterior
+session_regenerate_id(true);
+$_SESSION['usuario_id'] = $usuario['usuario_id'];
+$_SESSION['usuario']    = $usuario['usuario'];
+```
+
+```php
+// Caducidad por inactividad (30 minutos)
+if (isset($_SESSION['last_activity']) && time() - $_SESSION['last_activity'] > 1800) {
+    session_unset();
+    session_destroy();
+    header("Location: login.php");
+    exit();
+}
+$_SESSION['last_activity'] = time();
+```
+
+```php
+// Cierre de sesión completo
 session_start();
-$_SESSION = [];  // Vaciar datos
-session_destroy();  // Destruir sesión
-setcookie(session_name(), '', time()-3600, '/');  // Limpiar cookie
+$_SESSION = [];
+session_destroy();
+setcookie(session_name(), '', time() - 3600, '/');
 header("Location: login.php");
 exit();
 ```
 
-#### 5.3 Detección de Abuso de Sesión
+**Contraseñas:** prioriza la longitud sobre la complejidad (por ejemplo, mínimo 12 caracteres) y rechaza contraseñas comunes como `123456` o `qwerty`. Limita los intentos de inicio de sesión fallidos.
+
+### A08 — Fallos de integridad de software y datos
+
+- Revisa los cambios con `git diff` antes de cada commit.
+- No incluyas credenciales en el repositorio (ver [Gestión de secretos](#gestión-de-secretos)).
+- Descarga las librerías de terceros solo desde fuentes oficiales.
+
+### A09 — Fallos de registro y monitoreo
+
+**Recomendado:** registrar los eventos relevantes (inicios de sesión fallidos, accesos denegados, errores de base de datos) sin incluir datos sensibles.
+
 ```php
-// Validaciones adicionales (Fase 2)
-if (isset($_SESSION['last_activity']) && 
-    (time() - $_SESSION['last_activity'] > 1800)) {
-    // Session timeout (30 min)
-    session_destroy();
-    header("Location: login.php");
-}
-
-$_SESSION['last_activity'] = time();
-
-// Validar User Agent (no es perfect pero dificulta hijacking)
-if (!isset($_SESSION['user_agent'])) {
-    $_SESSION['user_agent'] = $_SERVER['HTTP_USER_AGENT'];
-}
-if ($_SESSION['user_agent'] !== $_SERVER['HTTP_USER_AGENT']) {
-    session_destroy();
-    die("Session tampering detected");
-}
-```
-
----
-
-### 6. A06:2021 - Sensitive Data Exposure
-
-**Riesgo:** Datos PII (Personally Identifiable Information) visibles en logs, errores, backups
-
-**Mitigaciones:**
-
-#### 6.1 Error Handling Seguro
-```php
-// ✗ INCORRECTO: Expone estructura de BD
-try {
-    $stmt->execute();
-} catch (PDOException $e) {
-    echo "Error: " . $e->getMessage();  // "SQLSTATE[HY000]: General error: 1030 Got error 28 from..."
-}
-
-// ✓ CORRECTO: Mensaje genérico + log privado
-try {
-    $stmt->execute();
-} catch (PDOException $e) {
-    error_log("DB Error: " . $e->getMessage());  // Archivo logs
-    $_SESSION['error'] = "Error en el sistema. Contacte a soporte.";
-}
-```
-
-#### 6.2 Logging Seguro
-```php
-// config/logging.php (crear)
-function logSecurely($action, $user_id, $data = []) {
-    $log_entry = [
-        'timestamp' => date('Y-m-d H:i:s'),
-        'action' => $action,
-        'user_id' => $user_id,  // Pseudonimizar: hash user_id?
-        'data' => [
-            'patient_id' => $data['patient_id'] ?? null,
-            // NO incluir: contraseña, DNI, credit card
-        ],
-        'ip' => $_SERVER['REMOTE_ADDR'],
+function registrarEventoSeguridad(string $nivel, string $mensaje, array $contexto = []): void
+{
+    $evento = [
+        'fecha'      => date(DATE_ATOM),
+        'nivel'      => $nivel,                              // INFO, WARNING, CRITICAL
+        'mensaje'    => $mensaje,
+        'ip'         => $_SERVER['REMOTE_ADDR'] ?? 'CLI',
+        'usuario_id' => $_SESSION['usuario_id'] ?? 'invitado',
+        'contexto'   => $contexto,
     ];
-    
-    file_put_contents('logs/actions.log', json_encode($log_entry) . "\n", FILE_APPEND);
+
+    error_log(json_encode($evento) . "\n", 3, '/var/log/happydent/security.log');
 }
 
-// En UserController::requestAppointment()
-logSecurely('APPOINTMENT_CREATED', $_SESSION['usuario_id'], 
-    ['patient_id' => $appointmentModel->cita_id]);
+registrarEventoSeguridad('WARNING', 'Intento de inicio de sesión fallido', ['intentos' => 3]);
 ```
 
-#### 6.3 Proteger Archivos Sensibles
+Reglas para los registros:
+
+- Guárdalos **fuera de la carpeta pública** del servidor.
+- No registres contraseñas, DNI ni datos clínicos.
+- Muestra al usuario un mensaje genérico y deja el detalle técnico solo en el registro:
+
+```php
+try {
+    $stmt->execute();
+} catch (PDOException $e) {
+    error_log("Error de base de datos: " . $e->getMessage());
+    $_SESSION['error'] = "Error en el sistema. Inténtalo de nuevo más tarde.";
+}
+```
+
+### A10 — Server-Side Request Forgery (SSRF)
+
+HappyDent no realiza peticiones HTTP a URLs proporcionadas por el usuario, por lo que este riesgo no aplica actualmente. Si en el futuro añades subida de archivos o integraciones externas: valida el tipo MIME real, guarda los archivos fuera de la carpeta pública y no uses nunca una URL del usuario como destino de una petición del servidor.
+
+## Recomendaciones para producción
+
+### HTTPS y cabeceras
+
 ```apache
-# .htaccess
-# Prevenir acceso directo a archivos config
-<FilesMatch "\.php$">
-    Order Deny,Allow
-    Deny from all
-    Allow from 127.0.0.1
-</FilesMatch>
+# .htaccess — forzar HTTPS
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Permitir solo archivos públicos
-<Directory "/var/www/html/clinica1/public">
-    Order Allow,Deny
-    Allow from all
-</Directory>
+# HSTS (solo cuando HTTPS funcione correctamente en todo el sitio)
+Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
 ```
 
----
-
-### 7. A07:2021 - Identification and Authentication Failures
-
-**Mitigaciones:**
-
-#### 7.1 Validación de Email
-```php
-// models/User.php
-public function create() {
-    // Validar formato email
-    if (!filter_var($this->correo_electronico, FILTER_VALIDATE_EMAIL)) {
-        return false;
-    }
-    
-    // Verificar email no exista (prevenir duplicados)
-    $query = "SELECT usuario_id FROM " . $this->table . 
-             " WHERE correo_electronico = :email";
-    $stmt = $this->conn->prepare($query);
-    $stmt->bindParam(':email', $this->correo_electronico);
-    $stmt->execute();
-    
-    if ($stmt->rowCount() > 0) {
-        $_SESSION['error'] = "Email ya registrado";
-        return false;
-    }
-    
-    // Continuar con INSERT
-}
+```apache
+# Configuración del servidor
+<VirtualHost *:443>
+    ServerName tu-dominio.com
+    SSLEngine on
+    SSLCertificateFile    /ruta/al/certificado.crt
+    SSLCertificateKeyFile /ruta/a/la/clave.key
+</VirtualHost>
 ```
 
-#### 7.2 Validación de Contraseña (Futuro)
-```php
-// Recomendación NIST 800-63B
-function validatePassword($password) {
-    $errors = [];
-    
-    // Mínimo 12 caracteres
-    if (strlen($password) < 12) {
-        $errors[] = "Mínimo 12 caracteres";
-    }
-    
-    // NO usar diccionario de palabras comunes
-    $common = ['password', '123456', 'qwerty', 'admin', ...];
-    if (in_array(strtolower($password), $common)) {
-        $errors[] = "Contraseña muy común";
-    }
-    
-    // NO requerirquiere caracteres especiales (mayúsculas/números)
-    // Los usuarios usan débiles (P@ss123)
-    
-    return $errors;
-}
-```
+### Lista de verificación previa al despliegue
 
----
+**Configuración**
 
-### 8. A08:2021 - Software and Data Integrity Failures
+- [ ] HTTPS activo con certificado válido y HSTS.
+- [ ] `display_errors = Off` y registro de errores activo.
+- [ ] Credenciales fuera del repositorio.
+- [ ] Contraseña de `root` de MySQL cambiada; la aplicación usa un usuario limitado.
+- [ ] Archivos de configuración y registros fuera de la carpeta pública.
+- [ ] Cookies de sesión con `HttpOnly`, `Secure` y `SameSite`.
+- [ ] `Content-Security-Policy` configurada.
+- [ ] Límite de intentos de inicio de sesión.
 
-**Riesgo:** Dependencies vulnerables, actualizaciones sin revisar
+**Operación**
 
-**Mitigaciones:**
+- [ ] Copias de seguridad automáticas, con restauración probada.
+- [ ] Monitoreo de los registros de seguridad.
+- [ ] Procedimiento de respuesta a incidentes documentado.
+- [ ] Política de privacidad conforme a la normativa de protección de datos aplicable.
 
-#### 8.1 Auditar Dependencias
-```bash
-# Si usa Composer (PHP dependency manager)
-composer show --outdated
+**Verificación**
 
-# Verificar vulnerabilidades
-composer audit
-```
+- [ ] Pruebas manuales de la sección siguiente superadas.
+- [ ] Análisis con una herramienta como OWASP ZAP.
+- [ ] Revisión por un profesional de seguridad antes de manejar datos reales de pacientes.
 
-#### 8.2 Versiones de Software
-```
-# Mantener actualizado
-- PHP 7.4+ (EOL Noviembre 2022, usar 8.0+)
-- MySQL 5.7 mínimo (EOL Octubre 2023)
-- Apache 2.4+ (LTS)
-```
+## Gestión de secretos
 
-#### 8.3 Revision Control
-```bash
-# Revisar cambios antes de commit
-git diff
+Las credenciales nunca deben estar en el código ni en Git. HappyDent las lee en este orden de prioridad:
 
-# No committear credenciales
-# Usar .env para config sensible
-```
+1. Variables de entorno.
+2. Constantes de `config/config.local.php`.
+3. Valores predeterminados de desarrollo.
 
----
-
-### 9. A09:2021 - Logging and Monitoring Failures
-
-**Riesgo:** Nadie se da cuenta de breach en progreso
-
-**Implementación:**
-```php
-// config/security_log.php
-function securityAlert($level, $message, $context = []) {
-    $alert = [
-        'timestamp' => date(DATE_ISO8601),
-        'level' => $level,  // INFO, WARNING, CRITICAL
-        'message' => $message,
-        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'CLI',
-        'user_id' => $_SESSION['usuario_id'] ?? 'GUEST',
-        'context' => $context,
-    ];
-    
-    // Log a archivo
-    error_log(json_encode($alert), 3, 'logs/security.log');
-    
-    // Si es CRITICAL, enviar email
-    if ($level === 'CRITICAL') {
-        mail('admin@clinica.com', 'Security Alert!', json_encode($alert));
-    }
-}
-
-// Ejemplos de uso
-securityAlert('WARNING', 'Failed login attempt', 
-    ['email' => $email, 'attempts' => 3]);
-
-securityAlert('CRITICAL', 'SQL Injection attempt detected', 
-    ['query' => $_GET['search']]);
-```
-
----
-
-### 10. A10:2021 - Server-Side Request Forgery (SSRF)
-
-**Riesgo:** Atacante hace que servidor haga requests a internos (ej: `file://`)
-
-**Mitigation:**
-```php
-// Si implementas funcionalidad de upload de archivos:
-// ✗ VULNERABLE:
-$file = fopen($_FILES['report']['tmp_name'], 'r');
-// Atacante envía: file:///etc/passwd
-
-// ✓ SEGURO:
-// - Validar MIME type
-// - Almacenar en carpeta fuera de web root
-// - Usar storage service (AWS S3, etc.)
-```
-
----
-
-## 🔍 Checklist de Seguridad Pre-Deployment
-
-### Antes de Producción:
-- [ ] **HTTPS/TLS** configurado y válido
-- [ ] **php.ini** hardened:
-  ```ini
-  display_errors = off
-  error_reporting = E_ALL
-  log_errors = on
-  error_log = /var/log/php_errors.log
-  ```
-- [ ] **Database credentials** en variables de entorno (.env)
-- [ ] **Contraseña root MySQL** cambiada de default
-- [ ] **Archivos config** no accesibles desde web
-- [ ] **Backups automáticos** configurados
-- [ ] **WAF (Web Application Firewall)** como ModSecurity
-- [ ] **Rate limiting** en login
-- [ ] **CORS headers** configurados correctamente
-- [ ] **Password hints** removidos (ej: "Min 8 caracteres")
-
-### Testing:
-- [ ] **OWASP ZAP scan** (herramienta libre)
-- [ ] **SQL Injection test** (sqlmap tool)
-- [ ] **XSS test** (enviar `<script>alert('test')</script>`)
-- [ ] **CSRF test** (form tampering)
-- [ ] **Penetration testing** con profesional
-
-### Operacional:
-- [ ] **Log monitoring** activo
-- [ ] **Incident response plan** documentado
-- [ ] **Seguro cyber** contratado
-- [ ] **Política de privacidad** actualizada (GDPR, CCPA)
-- [ ] **Términos de servicio** con disclaimers
-
----
-
-## 📋 Incidentes de Seguridad: Procedimiento
-
-Si ocurre un breach o incidente:
-
-1. **Contener (0-1 hora)**
-   ```bash
-   # Aislar servidor afectado
-   # Desconectar de internet si es crítico
-   # Preservar logs
-   ```
-
-2. **Investigar (1-4 horas)**
-   ```bash
-   # ¿Cuándo comenzó?
-   # ¿Quién fue afectado?
-   # ¿Qué datos se expusieron?
-   grep -r "injection attempt" /var/log/apache2/*
-   ```
-
-3. **Notificar (4-24 horas)**
-   - Usuarios afectados (requerido por ley)
-   - Autoridades (si datos personales)
-   - Aseguradora
-
-4. **Corregir (24-48 horas)**
-   - Patch de seguridad
-   - Cambio de credenciales
-   - Deploy en producción
-
-5. **Aprender (Posterior)**
-   - Post-mortem análisis
-   - Actualizar arquitectura
-   - Entrenar equipo
-
----
-
-## 🔐 Secrets Management
-
-### Variables Sensibles (NO en código)
-
-**Crear archivo `.env` en raíz del proyecto:**
-```env
-# .env (NO committerear a Git)
-DB_HOST=localhost
-DB_NAME=clinica
-DB_USER=clinica_app
-DB_PASS=XyZ9@9#kL2mNoPq$
-ADMIN_EMAIL=admin@clinica.com
-SMTP_PASS=Tu_Gmail_App_Password
-API_KEY=sk-proj-xxxxxxxxxxxx
-```
-
-**Cargar en config/conexion.php:**
 ```php
 <?php
-// Cargar .env
-if (file_exists(__DIR__ . '/../.env')) {
-    $env = parse_ini_file(__DIR__ . '/../.env');
-    define('DB_HOST', $env['DB_HOST']);
-    define('DB_NAME', $env['DB_NAME']);
-    define('DB_USER', $env['DB_USER']);
-    define('DB_PASS', $env['DB_PASS']);
-}
-
-class Conexion {
-    private $host = DB_HOST;
-    private $db = DB_NAME;
-    private $user = DB_USER;
-    private $password = DB_PASS;
-    // ...
-}
+// config/config.local.php
+define('DB_HOST',     '127.0.0.1');
+define('DB_NAME',     'clinica');
+define('DB_USER',     'clinica_app');
+define('DB_PASSWORD', '<contraseña-segura>');
 ```
 
-**En .gitignore:**
-```
-.env
-.env.local
-config/conexion.php (si contiene credenciales)
+Añade a `.gitignore`:
+
+```text
+config/config.local.php
 logs/
+.env
 ```
+
+Crea un usuario de base de datos con permisos mínimos para la aplicación:
+
+```sql
+CREATE USER 'clinica_app'@'localhost' IDENTIFIED BY '<contraseña-segura>';
+GRANT SELECT, INSERT, UPDATE, DELETE ON clinica.* TO 'clinica_app'@'localhost';
+```
+
+Si una credencial se sube por error a Git, cámbiala de inmediato: borrar el archivo del historial no basta.
+
+## Pruebas de seguridad manuales
+
+Ejecútalas en un entorno de prueba, nunca en producción.
+
+| Prueba | Cómo realizarla | Resultado esperado |
+|--------|-----------------|--------------------|
+| **Inyección SQL** | En `views/doctor/login.php`, usa como correo `admin@example.com' OR '1'='1` y cualquier contraseña. | Rechazo con el mensaje genérico de credenciales inválidas. |
+| **XSS** | Registra o crea una cita con el nombre `<script>alert('XSS')</script>`. | El texto se muestra literalmente; no aparece ninguna alerta. |
+| **CSRF** | Envía el formulario de cancelar o editar una cita eliminando el campo `csrf_token` (o alterando su valor) desde las herramientas de desarrollo. | La operación se rechaza y la cita no cambia. |
+| **IDOR (paciente)** | Inicia sesión como paciente A y abre `view_appointment.php?id=` con el ID de una cita del paciente B. | Redirección al historial; no se muestran datos. |
+| **IDOR (doctor)** | Inicia sesión como doctor A e intenta editar o cancelar una cita del doctor B. | La operación se rechaza. |
+| **Concurrencia** | Desde dos sesiones, reserva el mismo horario casi a la vez. | Solo una reserva se confirma. |
+| **Acceso sin sesión** | Abre directamente una vista protegida sin haber iniciado sesión. | Redirección al login. |
+
+## Respuesta a incidentes
+
+Si sospechas de una brecha:
+
+| Fase | Acciones |
+|------|----------|
+| **1. Contener** | Aísla el servidor afectado, bloquea el acceso comprometido y conserva los registros. |
+| **2. Investigar** | Determina cuándo empezó, qué cuentas y qué datos se vieron afectados y por qué vía se entró. |
+| **3. Notificar** | Avisa a las personas afectadas, a la aseguradora si la hay, y a las autoridades cuando la normativa aplicable lo exija (los plazos varían según el país). |
+| **4. Corregir** | Aplica el parche, cambia credenciales y claves, y cierra las sesiones activas. |
+| **5. Aprender** | Documenta lo ocurrido, ajusta los controles y actualiza esta política. |
 
 ---
 
-## 🚨 Test de Seguridad Manual
-
-### Test 1: SQL Injection
-```
-Ir a: http://localhost/clinica1/views/doctor/login.php
-Email: admin@gmail.com' OR '1'='1
-Contraseña: anything
-Resultado esperado: Rechazado (mensaje "Email o contraseña inválidos")
-```
-
-### Test 2: XSS
-```
-Crear cita con:
-Nombre: <script>alert('XSS')</script>
-
-Resultado esperado: 
-- Si se muestra alerta = VULNERABLE
-- Si se muestra como texto = SEGURO
-```
-
-### Test 3: CSRF (Simulado)
-```
-1. Logearse como paciente
-2. Abrir DevTools (F12) → Console
-3. Ejecutar:
-   fetch('clinica1/controllers/AppointmentController.php?action=cancel&cita_id=1', {
-     method: 'GET'
-   })
-
-Resultado esperado: Rechazado (requiere POST + token)
-```
-
----
-
-**Versión:** 2.0  
-**Última actualización:** Febrero 2026  
-**Responsable de Seguridad:** [Tu nombre]  
-**Contacto:** security@clinica.com
+**Versión:** 2.0 · **Última actualización:** febrero 2026
+**Responsable de seguridad:** [Jose Adolfo Mayhua] · **Contacto:** [joseadolmayhua01@gmail.com]
