@@ -11,6 +11,10 @@
             "handle": "filesystem"
         },
         {
+            "src": "/clinica/assets/(.*)",
+            "dest": "/assets/$1"
+        },
+        {
             "src": "/(.*)",
             "dest": "/api/index.php"
         }
