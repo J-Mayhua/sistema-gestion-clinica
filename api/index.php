@@ -47,4 +47,5 @@ $viewFile = $pages[$path];
 // Esta ya distingue entre paciente autenticado y público.
 $headerFile = __DIR__ . '/../views/cabecera/cabecera.php';
 
+$viewFile = $pages[$path];
 require __DIR__ . '/../views/layout.php';
